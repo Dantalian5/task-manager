@@ -2,9 +2,14 @@
   "name": "task-manager",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Marcos Valenzuela",
+    "url": "https://valenzuela.dev"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint"
   },
