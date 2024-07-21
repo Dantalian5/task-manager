@@ -1,7 +1,16 @@
-import Image from 'next/image';
+import Board from '@/components/layout/Board';
+import Navbar from '@/components/layout/Navbar';
+import BoardProvider from '@/context/BoardProvider';
 
 export default function Home() {
+  const columns = [];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <div>
+      <BoardProvider>
+        <Navbar />
+        <Board />
+      </BoardProvider>
+    </div>
   );
 }

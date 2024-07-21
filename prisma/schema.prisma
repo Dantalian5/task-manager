@@ -18,7 +18,17 @@ model User {
   name     String
   email    String @unique(map: "unique_email") @db.VarChar(255)
   password String @db.VarChar(255)
+  boards    Board[]
+}
+
+model Board {
+  id          Int       @id @default(autoincrement())
+  title       String
+  columns     String[]
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks    Task[]
+
 }
 
 model Task {
@@ -26,15 +36,15 @@ model Task {
   title       String
   description String?
   status      String
-  userId      Int
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boardId     Int
+  board       Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   subTasks    SubTask[]
 }
 
 model SubTask {
   id     Int    @id @default(autoincrement())
   title  String
-  status String
+  isCompleted Boolean  @default(false)
   taskId Int
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
