@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 
 import { useBoard } from '@/context/BoardProvider';
+import Column from '@/components/layout/Column';
+
+import { useColumns } from '@/context/ColumnsProvider';
 
 interface SubTask {
   id: number;
@@ -17,20 +20,19 @@ interface Task {
   subTasks: SubTask[];
 }
 
+const fetchData = async (id: number) => {
+  try {
+    const response = await fetch(`/api/boards/${id}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching boards:', error);
+  }
+};
 export default function Board() {
   const { selectedBoard } = useBoard();
-  const { columns } = selectedBoard || { columns: [] };
   const [data, setData] = useState<Task[]>([]);
-
-  const fetchData = async (id: number) => {
-    try {
-      const response = await fetch(`/api/boards/${selectedBoard?.id}/tasks`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching boards:', error);
-    }
-  };
+  const { columns, setColumns } = useColumns();
 
   useEffect(() => {
     const getTasks = async () => {
@@ -40,9 +42,9 @@ export default function Board() {
       }
     };
     getTasks();
-  }, [selectedBoard]);
+    setColumns(selectedBoard?.columns || []);
+  }, [selectedBoard, setColumns]);
 
-  console.log(data);
   if (columns.length == 0) {
     return (
       <main className="bg-slate-100 min-h-svh flex justify-center items-center p-4">
@@ -63,23 +65,15 @@ export default function Board() {
     );
   }
   return (
-    <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4">
+    <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6">
       {columns.map((column) => (
-        <div
+        <Column
           key={column}
-          className="min-w-[280px] border snap-start snap-always"
-        >
-          <h2 className="text-xs font-bold uppercase tracking-[2.4px] mb-6">
-            {column}
-          </h2>
-          <div className="flex flex-col w-full">
-            {data.map((task) => (
-              <div key={task.id} className="">
-                {task.title}
-              </div>
-            ))}
-          </div>
-        </div>
+          column={column}
+          tasks={data.filter(
+            (task) => task.status.toLowerCase() === column.toLowerCase()
+          )}
+        />
       ))}
     </main>
   );
