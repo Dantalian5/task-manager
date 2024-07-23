@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismaDB';
 
+interface SubTask {
+  id: number | null;
+  title: string;
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params?: { id?: string } }
@@ -11,7 +16,19 @@ export async function PUT(
   try {
     const updatedTask = await prisma.task.update({
       where: { id: parseInt(id, 10) },
-      data,
+      data: {
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        subTasks: {
+          upsert: data.subTasks.map((subTask: SubTask) => ({
+            where: { id: subTask.id || 0 },
+            update: { title: subTask.title },
+            create: { title: subTask.title },
+          })),
+        },
+      },
+      include: { subTasks: true },
     });
 
     return NextResponse.json(updatedTask);
