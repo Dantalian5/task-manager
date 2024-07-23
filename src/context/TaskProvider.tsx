@@ -48,7 +48,6 @@ export const TaskProvider = ({
       }
 
       const data = await response.json();
-      console.log(updatedTask, data);
       setTask(data);
     } catch (error) {
       console.error('Error updating task:', error);

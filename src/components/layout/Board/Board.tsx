@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 
-import { useBoard } from '@/context/BoardProvider';
 import Column from '@/components/layout/Column';
+import TaskCard from '@/components/common/TaskCard';
 
+import { useBoard } from '@/context/BoardProvider';
 import { useColumns } from '@/context/ColumnsProvider';
+import { TaskProvider } from '@/context/TaskProvider';
 
 interface SubTask {
   id: number;
@@ -69,11 +71,25 @@ export default function Board() {
       {columns.map((column) => (
         <Column
           key={column}
-          column={column}
-          tasks={data.filter(
-            (task) => task.status.toLowerCase() === column.toLowerCase()
-          )}
-        />
+          name={column}
+          number={
+            data.filter(
+              (task) => task.status.toLowerCase() === column.toLowerCase()
+            ).length
+          }
+        >
+          {data
+            .filter(
+              (task) => task.status.toLowerCase() === column.toLowerCase()
+            )
+            .map((task) => (
+              <div key={task.id}>
+                <TaskProvider initialTask={task}>
+                  <TaskCard />
+                </TaskProvider>
+              </div>
+            ))}
+        </Column>
       ))}
     </main>
   );

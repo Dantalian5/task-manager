@@ -1,3 +1,4 @@
+'use client';
 import { ModalHeader, ModalBody, ModalFooter } from '@nextui-org/modal';
 import { Divider } from '@nextui-org/divider';
 import { Checkbox } from '@nextui-org/checkbox';
@@ -9,17 +10,24 @@ import { useColumns } from '@/context/ColumnsProvider';
 import { useTask } from '@/context/TaskProvider';
 import ModalView from '@/components/common/ModalView';
 import EditTask from '@/components/forms/EditTask/EditTask';
+import { useRouter } from 'next/navigation';
 
 import ModalContext from '../ModalContext/ModalContext';
 
 export default function Details() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { task, updateSubTask } = useTask();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const { task, updateTask, updateSubTask } = useTask();
   const { columns } = useColumns();
   const { title, description, status, subTasks } = task;
   const completedSubTask = subTasks.filter(
     (subTask) => subTask.isCompleted
   ).length;
+
+  const router = useRouter();
+  const updateState = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateTask({ ...task, status: e.target.value });
+    router.refresh();
+  };
 
   return (
     <>
@@ -57,7 +65,7 @@ export default function Details() {
           defaultSelectedKeys={[status]}
           selectedKeys={[status]}
           selectionMode="single"
-          onChange={(e) => console.log(e)}
+          onChange={updateState}
         >
           {columns.map((column) => (
             <SelectItem key={column} className=" capitalize">
@@ -71,12 +79,12 @@ export default function Details() {
         <Button color="primary" onClick={onOpen}>
           Edit
         </Button>
-        {/* <ModalView isModalOpen={isOpen} onModalClose={onOpenChange}>
+        <ModalView isModalOpen={isOpen} onModalClose={onOpenChange}>
+          <EditTask closeModal={onClose} />
+        </ModalView>
+        {/* <ModalContext initialIsOpen={isOpen}>
           <EditTask />
-        </ModalView> */}
-        <ModalContext initialIsOpen={isOpen}>
-          <EditTask />
-        </ModalContext>
+        </ModalContext> */}
         <Button color="danger">Delete</Button>
       </ModalFooter>
     </>

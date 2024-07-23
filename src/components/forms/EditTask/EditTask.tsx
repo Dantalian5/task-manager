@@ -26,11 +26,9 @@ const svgClose = (
   </svg>
 );
 
-export default function EditTask() {
+export default function EditTask({ closeModal }: { closeModal: () => void }) {
   const { task, updateTask } = useTask();
   const { columns } = useColumns();
-
-  const { onClose } = useModal();
 
   const {
     register,
@@ -50,6 +48,7 @@ export default function EditTask() {
 
   const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
     updateTask(data);
+    closeModal();
   };
 
   return (
@@ -139,11 +138,11 @@ export default function EditTask() {
       </ModalBody>
       <Divider />
       <ModalFooter>
+        <Button color="default" onClick={closeModal}>
+          Cancel
+        </Button>
         <Button color="primary" form="task-form" type="submit">
           Save
-        </Button>
-        <Button color="danger" onClick={onClose}>
-          Delete
         </Button>
       </ModalFooter>
     </>
