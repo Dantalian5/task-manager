@@ -1,11 +1,8 @@
 import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { useDisclosure } from '@nextui-org/react';
 
-// import Details from '@/components/modals/Details';
 import Details from '@/components/common/Details';
-import ModalView from '@/components/common/ModalView';
 import { useTask } from '@/context/TaskProvider';
-import type { Task } from '@/types/global';
 
 export default function TaskCard() {
   const { task } = useTask();
@@ -35,9 +32,7 @@ export default function TaskCard() {
           </p>
         </CardBody>
       </Card>
-      <ModalView isModalOpen={isOpen} onModalClose={onOpenChange}>
-        <Details />
-      </ModalView>
+      <Details isModalOpen={isOpen} onModalClose={onOpenChange} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
-import { useBoard } from '@/context/BoardProvider';
+import { useBoard } from '@/context/BoardProvider/BoardProvider';
 
 export default function SelectBoard() {
   const { boards, selectedBoard, setSelectedBoard } = useBoard();

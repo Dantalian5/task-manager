@@ -16,7 +16,6 @@ interface UpdatedTask {
 interface IndividualTaskContextProps {
   task: Task;
   setTask: React.Dispatch<React.SetStateAction<Task>>;
-  updateTask: (updatedTask: UpdatedTask) => void;
   updateSubTask: (subTaskId: number, status: boolean) => void;
 }
 
@@ -32,27 +31,9 @@ export const TaskProvider = ({
   initialTask: Task;
 }) => {
   const [task, setTask] = useState<Task>(initialTask);
-
-  const updateTask = async (updatedTask: UpdatedTask) => {
-    try {
-      const response = await fetch(`/api/tasks/${updatedTask.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedTask),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update task');
-      }
-
-      const data = await response.json();
-      setTask(data);
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
+  useEffect(() => {
+    setTask(initialTask);
+  }, [initialTask]);
 
   const updateSubTask = async (subTaskId: number, status: boolean) => {
     try {
@@ -79,11 +60,12 @@ export const TaskProvider = ({
   };
 
   return (
-    <TaskContext.Provider value={{ task, setTask, updateSubTask, updateTask }}>
+    <TaskContext.Provider value={{ task, setTask, updateSubTask }}>
       {children}
     </TaskContext.Provider>
   );
 };
+export default TaskProvider;
 
 export const useTask = () => {
   const context = useContext(TaskContext);

@@ -1,51 +1,36 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 
 import Column from '@/components/layout/Column';
 import TaskCard from '@/components/common/TaskCard';
 
-import { useBoard } from '@/context/BoardProvider';
-import { useColumns } from '@/context/ColumnsProvider';
-import { TaskProvider } from '@/context/TaskProvider';
+import { useBoard } from '@/context/BoardProvider/BoardProvider';
+import TaskProvider from '@/context/TaskProvider';
 
-interface SubTask {
-  id: number;
-  title: string;
-  isCompleted: boolean;
-}
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  status: string;
-  subTasks: SubTask[];
-}
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from '@nextui-org/dropdown';
 
-const fetchData = async (id: number) => {
-  try {
-    const response = await fetch(`/api/boards/${id}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching boards:', error);
-  }
-};
+const svgPlus = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 32 32"
+  >
+    <path
+      fill="currentColor"
+      d="M19.05 5.06c0-1.68-1.37-3.06-3.06-3.06s-3.07 1.38-3.06 3.06v7.87H5.06C3.38 12.93 2 14.3 2 15.99c0 1.68 1.38 3.06 3.06 3.06h7.87v7.86c0 1.68 1.37 3.06 3.06 3.06c1.68 0 3.06-1.37 3.06-3.06v-7.86h7.86c1.68 0 3.06-1.37 3.06-3.06c0-1.68-1.37-3.06-3.06-3.06h-7.86z"
+    ></path>
+  </svg>
+);
+
 export default function Board() {
-  const { selectedBoard } = useBoard();
-  const [data, setData] = useState<Task[]>([]);
-  const { columns, setColumns } = useColumns();
-
-  useEffect(() => {
-    const getTasks = async () => {
-      if (selectedBoard !== null) {
-        const tasks = await fetchData(selectedBoard?.id);
-        setData(tasks);
-      }
-    };
-    getTasks();
-    setColumns(selectedBoard?.columns || []);
-  }, [selectedBoard, setColumns]);
+  const { tasks, columns } = useBoard();
 
   if (columns.length == 0) {
     return (
@@ -73,12 +58,12 @@ export default function Board() {
           key={column}
           name={column}
           number={
-            data.filter(
+            tasks.filter(
               (task) => task.status.toLowerCase() === column.toLowerCase()
             ).length
           }
         >
-          {data
+          {tasks
             .filter(
               (task) => task.status.toLowerCase() === column.toLowerCase()
             )
@@ -91,6 +76,24 @@ export default function Board() {
             ))}
         </Column>
       ))}
+      <Dropdown>
+        <DropdownTrigger>
+          <Button
+            className=" fixed bottom-2 right-2 text-xl font-bold"
+            color="primary"
+            isIconOnly
+            radius="full"
+            size="lg"
+          >
+            {svgPlus}
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Static Actions">
+          <DropdownItem key="new">New Board</DropdownItem>
+          <DropdownItem key="copy">New Column</DropdownItem>
+          <DropdownItem key="edit">New Task</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </main>
   );
 }
