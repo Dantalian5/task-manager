@@ -20,6 +20,16 @@ export interface UpdatedTask {
     title: string;
   }[];
 }
+export interface NewTask {
+  title: string;
+  description: string;
+  status: string;
+  boardId: number;
+  subTasks: {
+    id: number | null;
+    title: string;
+  }[];
+}
 export interface Board {
   id: number;
   title: string;

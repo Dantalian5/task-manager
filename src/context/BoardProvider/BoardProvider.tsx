@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
-import type { Board, Task, UpdatedTask } from '@/types/global';
+import type { Board, Task, UpdatedTask, NewTask } from '@/types/global';
 
 interface BoardContextProps {
   boards: Board[];
@@ -8,7 +8,9 @@ interface BoardContextProps {
   tasks: Task[];
   selectedBoard: Board | null;
   setSelectedBoard: React.Dispatch<React.SetStateAction<Board | null>>;
-  updateTask: (updatedTask: UpdatedTask) => void;
+  addTask: (newTask: NewTask) => Promise<void>;
+  updateTask: (updatedTask: UpdatedTask) => Promise<void>;
+  deleteTask: (taskId: number) => Promise<void>;
 }
 export const BoardContext = createContext<BoardContextProps | undefined>(
   undefined
@@ -73,6 +75,42 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error updating task:', error);
     }
   };
+  const addTask = async (newTask: NewTask) => {
+    try {
+      const response = await fetch(`/api/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      const data = await response.json();
+      setTasks((prevTasks) => [...prevTasks, data]);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+  const deleteTask = async (taskId: number) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
 
   return (
     <BoardContext.Provider
@@ -83,6 +121,8 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
         columns,
         tasks,
         updateTask,
+        addTask,
+        deleteTask,
       }}
     >
       {children}

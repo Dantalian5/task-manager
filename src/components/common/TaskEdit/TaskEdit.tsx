@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
 import { useBoard } from '@/context/BoardProvider';
-import { useTask } from '@/context/TaskProvider';
+import { Task } from '@/types/global';
 
 const svgClose = (
   <svg
@@ -31,19 +31,20 @@ const svgClose = (
 );
 
 interface EditTaskProps {
-  isModalOpen: boolean;
-  onModalClose: () => void;
-  closeModal: () => void;
+  isOpen: boolean;
+  onOpenChange: () => void;
+  onClose: () => void;
   action: 'add' | 'edit';
+  task?: Task;
 }
-export default function EditTask({
-  isModalOpen,
-  closeModal,
-  onModalClose,
+export default function TaskEdit({
+  isOpen,
+  onOpenChange,
+  onClose,
   action,
+  task,
 }: EditTaskProps) {
-  const { task } = useTask();
-  const { columns, updateTask } = useBoard();
+  const { columns, updateTask, selectedBoard, addTask } = useBoard();
 
   const {
     register,
@@ -53,30 +54,49 @@ export default function EditTask({
     control,
   } = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
-    defaultValues: task || {},
+    defaultValues: task || {
+      title: '',
+      description: '',
+      status: columns[0],
+      subTasks: [],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'subTasks',
   });
-
-  const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
-    updateTask(data);
-    closeModal();
+  const onCloseModal = () => {
+    onClose();
+    reset();
   };
-
+  const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
+    try {
+      if (action === 'add') {
+        await addTask({ ...data, boardId: selectedBoard?.id as number });
+      } else {
+        await updateTask({ ...data, id: task?.id as number });
+      }
+      reset();
+      onClose();
+    } catch (error) {
+      console.error('Error in submit handler:', error);
+    }
+  };
   return (
     <Modal
-      isOpen={isModalOpen}
-      onOpenChange={onModalClose}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       placement="center"
       className="w-[90%]"
+      onClose={onCloseModal}
     >
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Edit Task</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">
+              {action === 'add' ? 'Add New' : 'Edit'} Task
+            </ModalHeader>
             <ModalBody className="mb-4">
               <form
                 id="task-form"
@@ -91,6 +111,7 @@ export default function EditTask({
                   errorMessage={errors.title?.message}
                   variant="bordered"
                   radius="sm"
+                  placeholder="e.g. Add new task to board"
                   {...register('title')}
                 />
                 <Textarea
@@ -102,6 +123,7 @@ export default function EditTask({
                   variant="bordered"
                   radius="sm"
                   minRows={4}
+                  placeholder="e.g. Add new task description, so you can remember what to do"
                   {...register('description')}
                 />
                 <div className="flex flex-col gap-3">
@@ -163,7 +185,7 @@ export default function EditTask({
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button color="default" onClick={closeModal}>
+              <Button color="default" onClick={onClose}>
                 Cancel
               </Button>
               <Button color="primary" form="task-form" type="submit">

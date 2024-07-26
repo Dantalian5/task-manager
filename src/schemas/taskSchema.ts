@@ -6,11 +6,10 @@ export const subTaskSchema = z.object({
 });
 
 export const taskSchema = z.object({
-  id: z.number().int().positive(),
   title: z.string().min(1, 'Title is required'),
   description: z.string(),
   status: z.string().min(1, 'Status is required'),
-  subTasks: z.array(subTaskSchema),
+  subTasks: z.array(subTaskSchema).default([]),
 });
 
 export type SubTaskSchema = z.infer<typeof subTaskSchema>;

@@ -10,21 +10,23 @@ import { Divider } from '@nextui-org/divider';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Button } from '@nextui-org/button';
-import { useDisclosure } from '@nextui-org/react';
 
 import { useBoard } from '@/context/BoardProvider/BoardProvider';
 import { useTask } from '@/context/TaskProvider';
-import EditTask from '@/components/forms/EditTask/EditTask';
 
 interface DetailsProps {
-  isModalOpen: boolean;
-  onModalClose: () => void;
+  isOpen: boolean;
+  onOpenChange: () => void;
+  onEdit: () => void;
 }
-export default function Details({ isModalOpen, onModalClose }: DetailsProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+export default function Details({
+  isOpen,
+  onOpenChange,
+  onEdit,
+}: DetailsProps) {
   const { task, updateSubTask } = useTask();
-  const { columns, updateTask } = useBoard();
-  const { title, description, status, subTasks } = task;
+  const { columns, updateTask, deleteTask } = useBoard();
+  const { id, title, description, status, subTasks } = task;
   const [localStatus, setLocalStatus] = useState(status);
 
   const completedSubTask = subTasks.filter(
@@ -41,8 +43,8 @@ export default function Details({ isModalOpen, onModalClose }: DetailsProps) {
   };
   return (
     <Modal
-      isOpen={isModalOpen}
-      onOpenChange={onModalClose}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       placement="center"
       className="w-[90%]"
       onClose={updateState}
@@ -97,16 +99,12 @@ export default function Details({ isModalOpen, onModalClose }: DetailsProps) {
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button color="primary" onClick={onOpen}>
+              <Button color="primary" onClick={onEdit}>
                 Edit
               </Button>
-              <EditTask
-                action="edit"
-                isModalOpen={isOpen}
-                onModalClose={onOpenChange}
-                closeModal={onOpenChange}
-              />
-              <Button color="danger">Delete</Button>
+              <Button color="danger" onClick={() => deleteTask(id)}>
+                Delete
+              </Button>
             </ModalFooter>
           </>
         )}

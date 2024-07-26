@@ -1,8 +1,10 @@
 'use client';
 import { Button } from '@nextui-org/button';
+import { useDisclosure } from '@nextui-org/react';
 
 import Column from '@/components/layout/Column';
 import TaskCard from '@/components/common/TaskCard';
+import TaskEdit from '@/components/common/TaskEdit';
 
 import { useBoard } from '@/context/BoardProvider/BoardProvider';
 import TaskProvider from '@/context/TaskProvider';
@@ -31,6 +33,7 @@ const svgPlus = (
 
 export default function Board() {
   const { tasks, columns } = useBoard();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   if (columns.length == 0) {
     return (
@@ -89,11 +92,19 @@ export default function Board() {
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Static Actions">
-          <DropdownItem key="new">New Board</DropdownItem>
-          <DropdownItem key="copy">New Column</DropdownItem>
-          <DropdownItem key="edit">New Task</DropdownItem>
+          <DropdownItem key="new_task" onPress={onOpen}>
+            New Task
+          </DropdownItem>
+          <DropdownItem key="new_column">New Column</DropdownItem>
+          <DropdownItem key="new_board">New Board</DropdownItem>
         </DropdownMenu>
       </Dropdown>
+      <TaskEdit
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+        action={'add'}
+      />
     </main>
   );
 }
