@@ -8,6 +8,7 @@ interface BoardContextProps {
   tasks: Task[];
   selectedBoard: Board | null;
   setSelectedBoard: React.Dispatch<React.SetStateAction<Board | null>>;
+  updateBoard: (board: Board) => Promise<void>;
   addTask: (newTask: NewTask) => Promise<void>;
   updateTask: (updatedTask: UpdatedTask) => Promise<void>;
   deleteTask: (taskId: number) => Promise<void>;
@@ -53,6 +54,31 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [selectedBoard]);
 
+  const updateBoard = async (board: Board) => {
+    try {
+      const response = await fetch(`/api/boards/${board.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(board),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update board');
+      }
+
+      const updatedBoard = await response.json();
+      setSelectedBoard(updatedBoard);
+      setBoards((prevBoards) =>
+        prevBoards.map((board) =>
+          board.id === updatedBoard.id ? updatedBoard : board
+        )
+      );
+    } catch (error) {
+      console.error('Error updating board:', error);
+    }
+  };
   const updateTask = async (updatedTask: UpdatedTask) => {
     try {
       const response = await fetch(`/api/tasks/${updatedTask.id}`, {
@@ -123,6 +149,7 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
         updateTask,
         addTask,
         deleteTask,
+        updateBoard,
       }}
     >
       {children}

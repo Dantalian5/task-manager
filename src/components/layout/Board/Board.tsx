@@ -5,6 +5,7 @@ import { useDisclosure } from '@nextui-org/react';
 import Column from '@/components/layout/Column';
 import TaskCard from '@/components/common/TaskCard';
 import TaskEdit from '@/components/common/TaskEdit';
+import BoardEdit from '@/components/common/BoardEdit';
 
 import { useBoard } from '@/context/BoardProvider/BoardProvider';
 import TaskProvider from '@/context/TaskProvider';
@@ -32,10 +33,10 @@ const svgPlus = (
 );
 
 export default function Board() {
-  const { tasks, columns } = useBoard();
+  const { tasks, selectedBoard } = useBoard();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  if (columns.length == 0) {
+  if (selectedBoard?.columns.length == 0) {
     return (
       <main className="bg-slate-100 min-h-svh flex justify-center items-center p-4">
         <div className="flex flex-col items-center justify-center gap-6">
@@ -56,7 +57,7 @@ export default function Board() {
   }
   return (
     <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6">
-      {columns.map((column) => (
+      {selectedBoard?.columns.map((column) => (
         <Column
           key={column}
           name={column}

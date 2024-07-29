@@ -1,4 +1,6 @@
 'use client';
+import { useEffect } from 'react';
+
 import {
   Modal,
   ModalContent,
@@ -7,15 +9,14 @@ import {
   ModalFooter,
 } from '@nextui-org/modal';
 import { Divider } from '@nextui-org/divider';
-import { Select, SelectItem } from '@nextui-org/select';
-import { Input, Textarea } from '@nextui-org/input';
+import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
+import { type BoardSchema, boardSchema } from '@/schemas/boardSchema';
+import type { Board } from '@/types/global';
 import { useBoard } from '@/context/BoardProvider';
-import { Task } from '@/types/global';
 
 const svgClose = (
   <svg
@@ -31,21 +32,20 @@ const svgClose = (
   </svg>
 );
 
-interface EditTaskProps {
+interface BoardEditProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
-  action: 'add' | 'edit';
-  task?: Task;
+  action?: 'add' | 'edit';
 }
-export default function TaskEdit({
+
+export default function BoardEdit({
   isOpen,
   onOpenChange,
   onClose,
   action,
-  task,
-}: EditTaskProps) {
-  const { columns, updateTask, selectedBoard, addTask } = useBoard();
+}: BoardEditProps) {
+  const { selectedBoard, updateBoard } = useBoard();
 
   const {
     register,
@@ -53,36 +53,40 @@ export default function TaskEdit({
     formState: { errors },
     reset,
     control,
-  } = useForm<TaskSchema>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: task || {
-      title: '',
-      description: '',
-      status: columns[0],
-      subTasks: [],
-    },
+  } = useForm<BoardSchema>({
+    resolver: zodResolver(boardSchema),
+    defaultValues: { title: '', columns: [] },
   });
+  useEffect(() => {
+    if (selectedBoard) {
+      reset({
+        title: selectedBoard.title,
+        columns: selectedBoard.columns,
+      });
+    }
+  }, [selectedBoard, reset]);
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'subTasks',
-  });
-  const onCloseModal = () => {
-    onClose();
-    reset();
-  };
-  const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
+  const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
     try {
-      if (action === 'add') {
-        await addTask({ ...data, boardId: selectedBoard?.id as number });
+      if (selectedBoard && action === 'edit') {
+        await updateBoard({ ...data, id: selectedBoard.id });
       } else {
-        await updateTask({ ...data, id: task?.id as number });
+        // Lógica para agregar un nuevo board si es necesario
       }
-      reset();
       onClose();
     } catch (error) {
       console.error('Error in submit handler:', error);
     }
+  };
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'columns' as never,
+  });
+
+  const onCloseModal = () => {
+    reset();
+    onClose();
   };
   return (
     <Modal
@@ -96,7 +100,7 @@ export default function TaskEdit({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {action === 'add' ? 'Add New' : 'Edit'} Task
+              {action === 'add' ? 'Add New' : 'Edit'} Board
             </ModalHeader>
             <ModalBody className="mb-4">
               <form
@@ -107,40 +111,28 @@ export default function TaskEdit({
                 <Input
                   type="text"
                   labelPlacement="outside"
-                  label="Title"
+                  label="Board Name"
                   isInvalid={!!errors.title?.message}
                   errorMessage={errors.title?.message}
                   variant="bordered"
                   radius="sm"
-                  placeholder="e.g. Add new task to board"
+                  placeholder="e.g. New Board"
                   {...register('title')}
                 />
-                <Textarea
-                  type="text"
-                  labelPlacement="outside"
-                  label="Description"
-                  isInvalid={!!errors.description}
-                  errorMessage={errors.description?.message}
-                  variant="bordered"
-                  radius="sm"
-                  minRows={4}
-                  placeholder="e.g. Add new task description, so you can remember what to do"
-                  {...register('description')}
-                />
                 <div className="flex flex-col gap-3">
-                  <label>SubTasks</label>
-                  {fields.map((subTask, index) => (
+                  <label>Board Columns</label>
+                  {fields.map((column, index) => (
                     <div
-                      key={subTask.id}
+                      key={column.id}
                       className="flex gap-4 w-full items-center justify-center"
                     >
                       <Input
                         type="text"
-                        isInvalid={!!errors.subTasks?.[index]?.title?.message}
-                        errorMessage={errors.subTasks?.[index]?.title?.message}
+                        isInvalid={!!errors.columns?.[index]?.message}
+                        errorMessage={errors.columns?.[index]?.message}
                         variant="bordered"
                         radius="sm"
-                        {...register(`subTasks.${index}.title` as const)}
+                        {...register(`columns.${index}` as const)}
                       />
                       <Button
                         isIconOnly
@@ -153,40 +145,15 @@ export default function TaskEdit({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    color="secondary"
-                    onClick={() => append({ id: null, title: '' })}
-                  >
-                    Add SubTask
+                  <Button color="secondary" onClick={() => append('')}>
+                    + Add New Column
                   </Button>
                 </div>
-                <Select
-                  label="Status"
-                  classNames={{
-                    value: 'capitalize',
-                  }}
-                  variant="bordered"
-                  size="lg"
-                  color="default"
-                  aria-label="Select Status"
-                  labelPlacement="outside"
-                  selectionMode="single"
-                  radius="sm"
-                  isInvalid={!!errors.status?.message}
-                  errorMessage={errors.status?.message}
-                  {...register('status')}
-                >
-                  {columns.map((column) => (
-                    <SelectItem key={column} className=" capitalize">
-                      {column}
-                    </SelectItem>
-                  ))}
-                </Select>
               </form>
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button color="default" onClick={onClose}>
+              <Button color="default" onClick={onCloseModal}>
                 Cancel
               </Button>
               <Button color="primary" form="task-form" type="submit">

@@ -1,3 +1,4 @@
+'use client';
 import {
   Navbar as Nav,
   NavbarBrand,
@@ -8,9 +9,11 @@ import {
   NavbarMenuItem,
 } from '@nextui-org/navbar';
 import { Button } from '@nextui-org/button';
+import { useDisclosure } from '@nextui-org/react';
 
 import SelectBoard from '@/components/common/SelectBoard';
 import UserBtn from '@/components/common/UserBtn';
+import BoardEdit from '@/components/common/BoardEdit';
 
 const svgPlus = (
   <svg
@@ -47,32 +50,42 @@ const svgMenu = (
 );
 
 export default function Navbar() {
+  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
   return (
-    <Nav isBordered>
-      <NavbarContent justify="start" className="flex-initial gap-0">
-        <UserBtn />
-      </NavbarContent>
-      <SelectBoard />
-      <NavbarContent justify="end" className="gap-0">
-        <Button
-          color="primary"
-          size="sm"
-          variant="solid"
-          radius="full"
-          className="opacity-25 text-base py-2.5 h-auto px-5 min-w-px"
-        >
-          {svgPlus}
-        </Button>
-        <Button
-          color="default"
-          size="sm"
-          variant="light"
-          className="text-2xl opacity-70"
-          isIconOnly
-        >
-          {svgMenu}
-        </Button>
-      </NavbarContent>
-    </Nav>
+    <>
+      <Nav isBordered>
+        <NavbarContent justify="start" className="flex-initial gap-0">
+          <UserBtn />
+        </NavbarContent>
+        <SelectBoard />
+        <NavbarContent justify="end" className="gap-0">
+          <Button
+            color="primary"
+            size="sm"
+            variant="solid"
+            radius="full"
+            className="opacity-25 text-base py-2.5 h-auto px-5 min-w-px"
+            onClick={onOpen}
+          >
+            {svgPlus}
+          </Button>
+          <Button
+            color="default"
+            size="sm"
+            variant="light"
+            className="text-2xl opacity-70"
+            isIconOnly
+          >
+            {svgMenu}
+          </Button>
+        </NavbarContent>
+      </Nav>
+      <BoardEdit
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+        action="edit"
+      />
+    </>
   );
 }
