@@ -56,7 +56,7 @@ export default function Board() {
     );
   }
   return (
-    <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6">
+    <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full">
       {selectedBoard?.columns.map((column) => (
         <Column
           key={column}

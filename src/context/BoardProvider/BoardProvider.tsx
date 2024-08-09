@@ -1,13 +1,46 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
-import type { Board, Task, UpdatedTask, NewTask } from '@/types/global';
+// import type {
+//   Board,
+//   NewBoard,
+//   Task,
+//   UpdatedTask,
+//   NewTask,
+// } from '@/types/global';
+import type { NewBoard, UpdatedTask, NewTask } from '@/types/global';
 
+//-------------
+interface SubTask {
+  id: number;
+  title: string;
+  isCompleted: boolean;
+}
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  status: string;
+  subTasks: SubTask[];
+}
+type Column = string;
+
+interface Board {
+  id: number;
+  title: string;
+  columns: Column[];
+}
+interface FullBoard extends Board {
+  tasks: Task[];
+}
+//-------------
 interface BoardContextProps {
   boards: Board[];
+  selectedBoard: FullBoard;
   columns: string[];
   tasks: Task[];
-  selectedBoard: Board | null;
-  setSelectedBoard: React.Dispatch<React.SetStateAction<Board | null>>;
+  setSelectedBoard: React.Dispatch<React.SetStateAction<FullBoard>>;
+  changeSelectedBoard: (id: number) => void;
+  addBoard: (board: NewBoard) => Promise<void>;
   updateBoard: (board: Board) => Promise<void>;
   addTask: (newTask: NewTask) => Promise<void>;
   updateTask: (updatedTask: UpdatedTask) => Promise<void>;
@@ -17,28 +50,23 @@ export const BoardContext = createContext<BoardContextProps | undefined>(
   undefined
 );
 
-const BoardProvider = ({ children }: { children: React.ReactNode }) => {
-  const [boards, setBoards] = useState<Board[]>([]);
-  const [columns, setColumns] = useState<string[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedBoard, setSelectedBoard] = useState<Board | null>(null);
+const BoardProvider = ({
+  children,
+  initialBoards,
+  initialSelectedBoard,
+}: {
+  children: React.ReactNode;
+  initialBoards: any;
+  initialSelectedBoard: any;
+}) => {
+  const [boards, setBoards] = useState<Board[]>(initialBoards);
+  const [selectedBoard, setSelectedBoard] =
+    useState<FullBoard>(initialSelectedBoard);
+  const [columns, setColumns] = useState<Column[]>(
+    initialSelectedBoard.columns
+  );
+  const [tasks, setTasks] = useState<Task[]>(initialSelectedBoard.tasks);
 
-  useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const boardRes = await fetch('/api/boards');
-        const boards = await boardRes.json();
-        const selectedBoard = boards[0];
-
-        setBoards(boards);
-        setSelectedBoard(selectedBoard);
-        setColumns(selectedBoard.columns);
-      } catch (error) {
-        console.error('Error fetching boards:', error);
-      }
-    };
-    fetchBoards();
-  }, []);
   useEffect(() => {
     if (selectedBoard !== null) {
       const fetchBoards = async () => {
@@ -53,6 +81,35 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
       fetchBoards();
     }
   }, [selectedBoard]);
+
+  const changeSelectedBoard = async (boardId: number) => {
+    const selectedBoard = await fetch(`/api/boards/${boards[0].id}`).then(
+      (res) => res.json()
+    );
+    setSelectedBoard(selectedBoard);
+  };
+
+  const addBoard = async (board: NewBoard) => {
+    try {
+      const response = await fetch(`/api/boards`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(board),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update board');
+      }
+
+      const newBoard = await response.json();
+      setSelectedBoard(newBoard);
+      setBoards((prevBoards) => [...prevBoards, newBoard]);
+    } catch (error) {
+      console.error('Error updating board:', error);
+    }
+  };
 
   const updateBoard = async (board: Board) => {
     try {
@@ -79,6 +136,27 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error updating board:', error);
     }
   };
+
+  const addTask = async (newTask: NewTask) => {
+    try {
+      const response = await fetch(`/api/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      const data = await response.json();
+      setTasks((prevTasks) => [...prevTasks, data]);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
   const updateTask = async (updatedTask: UpdatedTask) => {
     try {
       const response = await fetch(`/api/tasks/${updatedTask.id}`, {
@@ -97,26 +175,6 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task.id === updatedTask.id ? data : task))
       );
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
-  const addTask = async (newTask: NewTask) => {
-    try {
-      const response = await fetch(`/api/tasks`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update task');
-      }
-
-      const data = await response.json();
-      setTasks((prevTasks) => [...prevTasks, data]);
     } catch (error) {
       console.error('Error updating task:', error);
     }
@@ -143,13 +201,15 @@ const BoardProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         selectedBoard,
         setSelectedBoard,
+        changeSelectedBoard,
         boards,
         columns,
         tasks,
-        updateTask,
-        addTask,
-        deleteTask,
+        addBoard,
         updateBoard,
+        addTask,
+        updateTask,
+        deleteTask,
       }}
     >
       {children}

@@ -35,3 +35,7 @@ export interface Board {
   title: string;
   columns: string[];
 }
+export interface NewBoard {
+  title: string;
+  columns: string[];
+}

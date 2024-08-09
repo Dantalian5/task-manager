@@ -45,7 +45,7 @@ export default function BoardEdit({
   onClose,
   action,
 }: BoardEditProps) {
-  const { selectedBoard, updateBoard } = useBoard();
+  const { selectedBoard, updateBoard, addBoard } = useBoard();
 
   const {
     register,
@@ -58,20 +58,20 @@ export default function BoardEdit({
     defaultValues: { title: '', columns: [] },
   });
   useEffect(() => {
-    if (selectedBoard) {
+    if (selectedBoard && action === 'edit') {
       reset({
         title: selectedBoard.title,
         columns: selectedBoard.columns,
       });
     }
-  }, [selectedBoard, reset]);
+  }, [selectedBoard, reset, action]);
 
   const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
     try {
       if (selectedBoard && action === 'edit') {
         await updateBoard({ ...data, id: selectedBoard.id });
       } else {
-        // Lógica para agregar un nuevo board si es necesario
+        await addBoard(data);
       }
       onClose();
     } catch (error) {

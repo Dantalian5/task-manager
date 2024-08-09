@@ -15,7 +15,7 @@ export default function SelectBoard() {
   };
   return (
     <Select
-      className="w-[50%] mr-auto"
+      className="w-[50%] mr-auto sm:hidden"
       classNames={{
         value: 'text-base font-bold',
       }}
