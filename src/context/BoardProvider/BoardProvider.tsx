@@ -7,13 +7,22 @@ import { createContext, useContext, useState, useEffect } from 'react';
 //   UpdatedTask,
 //   NewTask,
 // } from '@/types/global';
-import type { NewBoard, UpdatedTask, NewTask } from '@/types/global';
+import type { NewBoard, UpdatedTask } from '@/types/global';
 
 //-------------
 interface SubTask {
   id: number;
   title: string;
   isCompleted: boolean;
+}
+interface NewTask {
+  title: string;
+  description: string;
+  status: string;
+  subTasks: {
+    id: number | null;
+    title: string;
+  }[];
 }
 interface Task {
   id: number;
@@ -36,9 +45,8 @@ interface FullBoard extends Board {
 interface BoardContextProps {
   boards: Board[];
   selectedBoard: FullBoard;
+  selectedBoardId: number;
   columns: string[];
-  tasks: Task[];
-  setSelectedBoard: React.Dispatch<React.SetStateAction<FullBoard>>;
   changeSelectedBoard: (id: number) => void;
   addBoard: (board: NewBoard) => Promise<void>;
   updateBoard: (board: Board) => Promise<void>;
@@ -62,31 +70,14 @@ const BoardProvider = ({
   const [boards, setBoards] = useState<Board[]>(initialBoards);
   const [selectedBoard, setSelectedBoard] =
     useState<FullBoard>(initialSelectedBoard);
-  const [columns, setColumns] = useState<Column[]>(
-    initialSelectedBoard.columns
-  );
-  const [tasks, setTasks] = useState<Task[]>(initialSelectedBoard.tasks);
-
-  useEffect(() => {
-    if (selectedBoard !== null) {
-      const fetchBoards = async () => {
-        try {
-          const taskRes = await fetch(`/api/boards/${selectedBoard.id}/tasks`);
-          const tasks = await taskRes.json();
-          setTasks(tasks);
-        } catch (error) {
-          console.error('Error fetching boards:', error);
-        }
-      };
-      fetchBoards();
-    }
-  }, [selectedBoard]);
+  const [columns, setColumns] = useState<Column[]>(selectedBoard.columns);
+  const selectedBoardId = selectedBoard.id;
 
   const changeSelectedBoard = async (boardId: number) => {
-    const selectedBoard = await fetch(`/api/boards/${boards[0].id}`).then(
-      (res) => res.json()
+    const newSelectedBoard = await fetch(`/api/boards/${boardId}`).then((res) =>
+      res.json()
     );
-    setSelectedBoard(selectedBoard);
+    setSelectedBoard(newSelectedBoard);
   };
 
   const addBoard = async (board: NewBoard) => {
@@ -144,7 +135,7 @@ const BoardProvider = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newTask),
+        body: JSON.stringify({ ...newTask, boardId: selectedBoardId }),
       });
 
       if (!response.ok) {
@@ -152,7 +143,10 @@ const BoardProvider = ({
       }
 
       const data = await response.json();
-      setTasks((prevTasks) => [...prevTasks, data]);
+      setSelectedBoard((prev) => ({
+        ...prev,
+        tasks: [...prev.tasks, data],
+      }));
     } catch (error) {
       console.error('Error updating task:', error);
     }
@@ -172,9 +166,10 @@ const BoardProvider = ({
       }
 
       const data = await response.json();
-      setTasks((prevTasks) =>
-        prevTasks.map((task) => (task.id === updatedTask.id ? data : task))
-      );
+      setSelectedBoard((prev) => ({
+        ...prev,
+        tasks: prev.tasks.map((task) => (task.id === data.id ? data : task)), // Actualizamos la tarea específica
+      }));
     } catch (error) {
       console.error('Error updating task:', error);
     }
@@ -190,7 +185,10 @@ const BoardProvider = ({
         throw new Error('Failed to delete task');
       }
 
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      setSelectedBoard((prevBoard) => ({
+        ...prevBoard,
+        tasks: prevBoard.tasks.filter((task) => task.id !== taskId),
+      }));
     } catch (error) {
       console.error('Error deleting task:', error);
     }
@@ -200,11 +198,10 @@ const BoardProvider = ({
     <BoardContext.Provider
       value={{
         selectedBoard,
-        setSelectedBoard,
+        selectedBoardId,
         changeSelectedBoard,
         boards,
         columns,
-        tasks,
         addBoard,
         updateBoard,
         addTask,

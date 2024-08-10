@@ -74,7 +74,7 @@ export default function TaskEdit({
   const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
     try {
       if (action === 'add') {
-        await addTask({ ...data, boardId: selectedBoard?.id as number });
+        await addTask({ ...data });
       } else {
         await updateTask({ ...data, id: task?.id as number });
       }

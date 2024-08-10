@@ -9,6 +9,7 @@ import BoardEdit from '@/components/common/BoardEdit';
 
 import { useBoard } from '@/context/BoardProvider/BoardProvider';
 import TaskProvider from '@/context/TaskProvider';
+import TopBar from '@/components/layout/TopBar';
 
 import {
   Dropdown,
@@ -18,22 +19,11 @@ import {
   DropdownItem,
 } from '@nextui-org/dropdown';
 
-const svgPlus = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
-    viewBox="0 0 32 32"
-  >
-    <path
-      fill="currentColor"
-      d="M19.05 5.06c0-1.68-1.37-3.06-3.06-3.06s-3.07 1.38-3.06 3.06v7.87H5.06C3.38 12.93 2 14.3 2 15.99c0 1.68 1.38 3.06 3.06 3.06h7.87v7.86c0 1.68 1.37 3.06 3.06 3.06c1.68 0 3.06-1.37 3.06-3.06v-7.86h7.86c1.68 0 3.06-1.37 3.06-3.06c0-1.68-1.37-3.06-3.06-3.06h-7.86z"
-    ></path>
-  </svg>
-);
+import { svgPlus } from '@/utils/svgIcons';
 
 export default function Board() {
-  const { tasks, selectedBoard } = useBoard();
+  const { selectedBoard } = useBoard();
+  const { columns, tasks } = selectedBoard;
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   if (selectedBoard?.columns.length == 0) {
@@ -56,30 +46,35 @@ export default function Board() {
     );
   }
   return (
-    <main className="bg-slate-100 min-h-svh flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full">
-      {selectedBoard?.columns.map((column) => (
-        <Column
-          key={column}
-          name={column}
-          number={
-            tasks.filter(
-              (task) => task.status.toLowerCase() === column.toLowerCase()
-            ).length
-          }
-        >
-          {tasks
-            .filter(
-              (task) => task.status.toLowerCase() === column.toLowerCase()
-            )
-            .map((task) => (
-              <div key={task.id}>
-                <TaskProvider initialTask={task}>
-                  <TaskCard />
-                </TaskProvider>
-              </div>
-            ))}
-        </Column>
-      ))}
+    <main className="bg-slate-100 w-full flex flex-col items-stretch flex-grow">
+      <TopBar title={selectedBoard.title} />
+      <div className=" flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full h-full flex-grow">
+        {' '}
+        {columns.map((column) => (
+          <Column
+            key={column}
+            name={column}
+            number={
+              tasks.filter(
+                (task) => task.status.toLowerCase() === column.toLowerCase()
+              ).length
+            }
+          >
+            {tasks
+              .filter(
+                (task) => task.status.toLowerCase() === column.toLowerCase()
+              )
+              .map((task) => (
+                <div key={task.id}>
+                  <TaskProvider initialTask={task}>
+                    <TaskCard />
+                  </TaskProvider>
+                </div>
+              ))}
+          </Column>
+        ))}
+      </div>
+
       <Dropdown>
         <DropdownTrigger>
           <Button

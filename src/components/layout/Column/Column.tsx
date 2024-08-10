@@ -20,7 +20,7 @@ interface ColumnProps {
 }
 export default function Column({ name, number, children }: ColumnProps) {
   return (
-    <div className="min-w-[280px] snap-start snap-always">
+    <div className="w-[280px] snap-start snap-always">
       <h2 className="text-xs font-bold uppercase tracking-[2.4px] mb-6">
         {name} ({number})
       </h2>

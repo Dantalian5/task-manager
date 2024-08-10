@@ -12,7 +12,7 @@ export default async function Home() {
   ).then((res) => res.json());
 
   return (
-    <div className="flex flex-col sm:flex-row">
+    <div className="flex flex-col sm:flex-row items-stretch min-h-svh">
       <BoardProvider initialBoards={boards} initialSelectedBoard={initialBoard}>
         <Navbar />
         <Board />

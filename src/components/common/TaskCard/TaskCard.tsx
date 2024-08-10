@@ -40,7 +40,7 @@ export default function TaskCard() {
         onPress={openDetails}
       >
         <CardHeader className="p-0 mb-2">
-          <p className="font-bold text-base">{title}</p>
+          <p className="font-bold text-base text-start">{title}</p>
         </CardHeader>
         <CardBody className="p-0">
           <p className="font-bold text-xs opacity-50">
