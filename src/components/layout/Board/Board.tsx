@@ -46,7 +46,7 @@ export default function Board() {
     );
   }
   return (
-    <main className="bg-slate-100 w-full flex flex-col items-stretch flex-grow">
+    <main className="bg-slate-100 w-full flex flex-col items-stretch flex-grow overflow-scroll">
       <TopBar title={selectedBoard.title} />
       <div className=" flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full h-full flex-grow">
         {' '}
@@ -73,6 +73,14 @@ export default function Board() {
               ))}
           </Column>
         ))}
+        <div className="w-[280px] min-w-[280px] snap-start snap-always self-stretch flex flex-col gap-6">
+          <span className="block text-xs font-bold invisible">
+            Add new column
+          </span>
+          <button className="bg-slate-200 w-full flex items-center justify-center flex-grow rounded-lg font-semibold">
+            + Add New Column
+          </button>
+        </div>
       </div>
 
       <Dropdown>

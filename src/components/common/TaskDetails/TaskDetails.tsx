@@ -46,17 +46,20 @@ export default function Details({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
-      className="w-[90%]"
       onClose={updateState}
+      classNames={{
+        wrapper: 'w-full',
+        base: 'p-2 w-[90%] max-w-[480px]',
+      }}
     >
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
+            <ModalHeader>{title}</ModalHeader>
             <ModalBody className="mb-4">
-              <p>{description}</p>
-              <Divider />
-              <p>{`Subtasks (${completedSubTask} of ${subTasks.length})`}</p>
+              <p className="text-sm text-secondary">{description}</p>
+              <Divider className="my-2" />
+              <p className="text-xs text-secondary font-bold">{`Subtasks (${completedSubTask} of ${subTasks.length})`}</p>
               {subTasks.map((subTask) => (
                 <Checkbox
                   key={subTask.id}
@@ -65,7 +68,8 @@ export default function Details({
                   isSelected={subTask.isCompleted}
                   lineThrough
                   classNames={{
-                    base: 'bg-primary/10 rounded-lg w-full max-w-none m-0 p-3',
+                    base: 'bg-primary/5 rounded-lg w-full max-w-none m-0 p-3',
+                    label: 'text-sm font-semibold text-secondary',
                   }}
                   onChange={() =>
                     updateSubTask(subTask.id, !subTask.isCompleted)
@@ -74,15 +78,17 @@ export default function Details({
                   {subTask.title}
                 </Checkbox>
               ))}
-              <Divider />
+              <Divider className="my-2" />
               <Select
                 label="Current Status"
                 classNames={{
-                  value: 'capitalize',
+                  value: 'capitalize text-foreground text-sm',
+                  label: 'text-xs text-secondary font-bold',
+                  listbox: 'text-secondary text-sm',
                 }}
                 variant="bordered"
                 size="lg"
-                color="default"
+                color="secondary"
                 aria-label="Select Status"
                 labelPlacement="outside"
                 defaultSelectedKeys={[localStatus]}
@@ -90,7 +96,7 @@ export default function Details({
                 selectionMode="single"
                 onChange={changeLocalStatus}
               >
-                {columns.map((column) => (
+                {columns.map((column: string) => (
                   <SelectItem key={column} className=" capitalize">
                     {column}
                   </SelectItem>

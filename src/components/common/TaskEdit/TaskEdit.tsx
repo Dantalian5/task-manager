@@ -89,13 +89,16 @@ export default function TaskEdit({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
-      className="w-[90%]"
+      classNames={{
+        wrapper: 'w-full',
+        base: 'p-2 w-[90%] max-w-[480px]',
+      }}
       onClose={onCloseModal}
     >
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
+            <ModalHeader>
               {action === 'add' ? 'Add New' : 'Edit'} Task
             </ModalHeader>
             <ModalBody className="mb-4">
@@ -113,6 +116,12 @@ export default function TaskEdit({
                   variant="bordered"
                   radius="sm"
                   placeholder="e.g. Add new task to board"
+                  isClearable
+                  color="secondary"
+                  classNames={{
+                    label: 'text-sm font-semibold text-secondary',
+                    inputWrapper: 'border hover:border-primary',
+                  }}
                   {...register('title')}
                 />
                 <Textarea
@@ -125,10 +134,17 @@ export default function TaskEdit({
                   radius="sm"
                   minRows={4}
                   placeholder="e.g. Add new task description, so you can remember what to do"
+                  color="secondary"
+                  classNames={{
+                    label: 'text-sm font-semibold text-secondary',
+                    inputWrapper: 'border',
+                  }}
                   {...register('description')}
                 />
                 <div className="flex flex-col gap-3">
-                  <label>SubTasks</label>
+                  <label className="text-sm font-semibold text-secondary">
+                    SubTasks
+                  </label>
                   {fields.map((subTask, index) => (
                     <div
                       key={subTask.id}
@@ -140,6 +156,9 @@ export default function TaskEdit({
                         errorMessage={errors.subTasks?.[index]?.title?.message}
                         variant="bordered"
                         radius="sm"
+                        classNames={{
+                          inputWrapper: 'border hover:border-primary',
+                        }}
                         {...register(`subTasks.${index}.title` as const)}
                       />
                       <Button
@@ -154,20 +173,22 @@ export default function TaskEdit({
                     </div>
                   ))}
                   <Button
-                    color="secondary"
+                    color="primary"
                     onClick={() => append({ id: null, title: '' })}
                   >
-                    Add SubTask
+                    + Add SubTask
                   </Button>
                 </div>
                 <Select
                   label="Status"
                   classNames={{
-                    value: 'capitalize',
+                    value: 'capitalize text-foreground text-sm',
+                    label: 'text-sm text-secondary font-bold',
+                    listbox: 'text-secondary text-sm',
                   }}
                   variant="bordered"
                   size="lg"
-                  color="default"
+                  color="secondary"
                   aria-label="Select Status"
                   labelPlacement="outside"
                   selectionMode="single"
