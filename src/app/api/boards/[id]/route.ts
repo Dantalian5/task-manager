@@ -49,6 +49,13 @@ export async function PUT(
         title: data.title,
         columns: data.columns,
       },
+      include: {
+        tasks: {
+          include: {
+            subTasks: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(updatedBoard, { status: 200 });

@@ -2,7 +2,6 @@
 import { Button } from '@nextui-org/button';
 import { useDisclosure } from '@nextui-org/react';
 
-import Column from '@/components/layout/Column';
 import TaskCard from '@/components/common/TaskCard';
 import TaskEdit from '@/components/common/TaskEdit';
 import BoardEdit from '@/components/common/BoardEdit';
@@ -23,8 +22,9 @@ import { svgPlus } from '@/utils/svgIcons';
 
 export default function Board() {
   const { selectedBoard } = useBoard();
-  const { columns, tasks } = selectedBoard;
+  // const { columns, tasks } = selectedBoard;
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  console.log(selectedBoard);
 
   if (selectedBoard?.columns.length == 0) {
     return (
@@ -50,28 +50,34 @@ export default function Board() {
       <TopBar title={selectedBoard.title} />
       <div className=" flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full h-full flex-grow">
         {' '}
-        {columns.map((column) => (
-          <Column
+        {selectedBoard.columns.map((column) => (
+          <div
             key={column}
-            name={column}
-            number={
-              tasks.filter(
-                (task) => task.status.toLowerCase() === column.toLowerCase()
-              ).length
-            }
+            className="w-[280px] min-w-[280px] snap-start snap-always"
           >
-            {tasks
-              .filter(
-                (task) => task.status.toLowerCase() === column.toLowerCase()
+            <h2 className="text-xs font-bold uppercase tracking-[2.4px] mb-6">
+              {column} (
+              {
+                selectedBoard.tasks.filter(
+                  (task) => task.status.toLowerCase() === column.toLowerCase()
+                ).length
+              }
               )
-              .map((task) => (
-                <div key={task.id}>
-                  <TaskProvider initialTask={task}>
-                    <TaskCard />
-                  </TaskProvider>
-                </div>
-              ))}
-          </Column>
+            </h2>
+            <div className="flex flex-col w-full gap-y-5">
+              {selectedBoard.tasks
+                .filter(
+                  (task) => task.status.toLowerCase() === column.toLowerCase()
+                )
+                .map((task) => (
+                  <div key={task.id}>
+                    <TaskProvider initialTask={task}>
+                      <TaskCard />
+                    </TaskProvider>
+                  </div>
+                ))}
+            </div>
+          </div>
         ))}
         <div className="w-[280px] min-w-[280px] snap-start snap-always self-stretch flex flex-col gap-6">
           <span className="block text-xs font-bold invisible">

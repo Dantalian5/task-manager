@@ -95,6 +95,10 @@ export default function BoardEdit({
       placement="center"
       className="w-[90%]"
       onClose={onCloseModal}
+      classNames={{
+        wrapper: 'w-full',
+        base: 'p-2 w-[90%] max-w-[480px]',
+      }}
     >
       <ModalContent>
         {(onClose) => (
@@ -117,10 +121,18 @@ export default function BoardEdit({
                   variant="bordered"
                   radius="sm"
                   placeholder="e.g. New Board"
+                  isClearable
+                  color="secondary"
+                  classNames={{
+                    label: 'text-sm font-semibold text-secondary',
+                    inputWrapper: 'border hover:border-primary',
+                  }}
                   {...register('title')}
                 />
                 <div className="flex flex-col gap-3">
-                  <label>Board Columns</label>
+                  <label className="text-sm font-semibold text-secondary">
+                    Board Columns
+                  </label>
                   {fields.map((column, index) => (
                     <div
                       key={column.id}
@@ -132,6 +144,9 @@ export default function BoardEdit({
                         errorMessage={errors.columns?.[index]?.message}
                         variant="bordered"
                         radius="sm"
+                        classNames={{
+                          inputWrapper: 'border hover:border-primary',
+                        }}
                         {...register(`columns.${index}` as const)}
                       />
                       <Button
@@ -145,7 +160,7 @@ export default function BoardEdit({
                       </Button>
                     </div>
                   ))}
-                  <Button color="secondary" onClick={() => append('')}>
+                  <Button color="primary" onClick={() => append('')}>
                     + Add New Column
                   </Button>
                 </div>
@@ -153,6 +168,15 @@ export default function BoardEdit({
             </ModalBody>
             <Divider />
             <ModalFooter>
+              {action === 'edit' && (
+                <Button
+                  color="danger"
+                  onClick={() => console.log('delete board')}
+                  className="mr-auto"
+                >
+                  Delete
+                </Button>
+              )}
               <Button color="default" onClick={onCloseModal}>
                 Cancel
               </Button>

@@ -31,7 +31,7 @@ export default function TaskCard() {
   return (
     <>
       <Card
-        shadow="sm"
+        shadow="md"
         fullWidth
         radius="sm"
         className="p-4"
