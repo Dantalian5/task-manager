@@ -45,7 +45,7 @@ export default function TaskEdit({
   action,
   task,
 }: EditTaskProps) {
-  const { columns, updateTask, selectedBoard, addTask } = useBoard();
+  const { columns } = useBoard();
 
   const {
     register,

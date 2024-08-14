@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Task Manager | by MV',
   description: 'Task manager. Get things done!',
 };
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,

@@ -6,7 +6,7 @@ import { useDisclosure } from '@nextui-org/react';
 import { Tooltip } from '@nextui-org/tooltip';
 
 import TaskEdit from '@/components/common/TaskEdit';
-import BoardEdit from '@/components/common/BoardEdit';
+import EditBoard from '@/components/common/EditBoard';
 import { svgEditBoard } from '@/utils/svgIcons';
 
 interface TopBoardProps {
@@ -54,13 +54,13 @@ export default function Topbar({ title }: TopBoardProps) {
           </Button>
         </Tooltip>
       </div>
-      <TaskEdit
+      {/* <TaskEdit
         isOpen={isTaskEditOpen}
         onOpenChange={onTaskEditOpenChange}
         onClose={onTaskEditClose}
         action={'add'}
-      />
-      <BoardEdit
+      /> */}
+      <EditBoard
         isOpen={isBoardEditOpen}
         onOpenChange={onBoardEditOpenChange}
         onClose={onBoardEditClose}

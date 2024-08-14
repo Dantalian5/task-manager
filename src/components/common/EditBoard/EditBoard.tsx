@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Modal,
@@ -15,22 +15,8 @@ import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { type BoardSchema, boardSchema } from '@/schemas/boardSchema';
-import type { Board } from '@/types/global';
-import { useBoard } from '@/context/BoardProvider';
-
-const svgClose = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
-    viewBox="0 0 512 512"
-  >
-    <path
-      fill="currentColor"
-      d="m289.94 256l95-95A24 24 0 0 0 351 127l-95 95l-95-95a24 24 0 0 0-34 34l95 95l-95 95a24 24 0 1 0 34 34l95-95l95 95a24 24 0 0 0 34-34Z"
-    ></path>
-  </svg>
-);
+import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
+import { svgClose } from '@/utils/svgIcons';
 
 interface BoardEditProps {
   isOpen: boolean;
@@ -43,9 +29,9 @@ export default function BoardEdit({
   isOpen,
   onOpenChange,
   onClose,
-  action,
 }: BoardEditProps) {
-  const { selectedBoard, updateBoard, addBoard } = useBoard();
+  const { changeSelectedBoard, reload: reloadBoards } = useBoards();
+  const { board, reload } = useSelectedBoard();
 
   const {
     register,
@@ -57,37 +43,80 @@ export default function BoardEdit({
     resolver: zodResolver(boardSchema),
     defaultValues: { title: '', columns: [] },
   });
+
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'columns',
+  });
+
   useEffect(() => {
-    if (selectedBoard && action === 'edit') {
+    if (board) {
       reset({
-        title: selectedBoard.title,
-        columns: selectedBoard.columns,
+        title: board.title,
       });
+      replace(
+        board.columns.map((column) => ({
+          id: column.id,
+          name: column.name,
+        }))
+      );
     }
-  }, [selectedBoard, reset, action]);
+  }, [board, reset, replace]);
 
   const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
     try {
-      if (selectedBoard && action === 'edit') {
-        await updateBoard({ ...data, id: selectedBoard.id });
-      } else {
-        await addBoard(data);
+      const payload = {
+        id: board.id,
+        title: data.title,
+        columns: data.columns.map((column: any) => ({
+          id: column.id || undefined,
+          name: column.name,
+        })),
+      };
+
+      const response = await fetch(`/api/boards/${board.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update board');
       }
+
+      const updatedBoard = await response.json();
+      reload();
+      reloadBoards();
       onClose();
     } catch (error) {
-      console.error('Error in submit handler:', error);
+      console.error('Error updating board:', error);
     }
   };
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'columns' as never,
-  });
-
   const onCloseModal = () => {
     reset();
     onClose();
   };
+  const onDelete = async () => {
+    try {
+      const response = await fetch(`/api/boards/${board.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete board');
+      }
+      changeSelectedBoard(null);
+      onClose();
+    } catch (error) {
+      console.error('Error deleting board:', error);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -104,7 +133,7 @@ export default function BoardEdit({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {action === 'add' ? 'Add New' : 'Edit'} Board
+              Edit Board
             </ModalHeader>
             <ModalBody className="mb-4">
               <form
@@ -140,14 +169,14 @@ export default function BoardEdit({
                     >
                       <Input
                         type="text"
-                        isInvalid={!!errors.columns?.[index]?.message}
-                        errorMessage={errors.columns?.[index]?.message}
+                        isInvalid={!!errors.columns?.[index]?.name?.message}
+                        errorMessage={errors.columns?.[index]?.name?.message}
                         variant="bordered"
                         radius="sm"
                         classNames={{
                           inputWrapper: 'border hover:border-primary',
                         }}
-                        {...register(`columns.${index}` as const)}
+                        {...register(`columns.${index}.name` as const)}
                       />
                       <Button
                         isIconOnly
@@ -160,7 +189,7 @@ export default function BoardEdit({
                       </Button>
                     </div>
                   ))}
-                  <Button color="primary" onClick={() => append('')}>
+                  <Button color="primary" onClick={() => append({ name: '' })}>
                     + Add New Column
                   </Button>
                 </div>
@@ -168,16 +197,15 @@ export default function BoardEdit({
             </ModalBody>
             <Divider />
             <ModalFooter>
-              {action === 'edit' && (
-                <Button
-                  color="danger"
-                  onClick={() => console.log('delete board')}
-                  className="mr-auto"
-                >
-                  Delete
-                </Button>
-              )}
-              <Button color="default" onClick={onCloseModal}>
+              <Button
+                color="danger"
+                onClick={onDelete}
+                className="mr-auto"
+                type="button"
+              >
+                Delete
+              </Button>
+              <Button color="default" onClick={onCloseModal} type="button">
                 Cancel
               </Button>
               <Button color="primary" form="task-form" type="submit">

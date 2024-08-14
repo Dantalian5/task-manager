@@ -18,7 +18,7 @@ export default function UserBtn() {
           className="transition-transform"
           color="primary"
           name="J"
-          size="sm"
+          size="md"
         />
       </DropdownTrigger>
       <DropdownMenu aria-label="Profile Actions" variant="flat">
