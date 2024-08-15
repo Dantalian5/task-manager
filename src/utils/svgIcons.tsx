@@ -83,3 +83,40 @@ export const svgClose = (
     ></path>
   </svg>
 );
+
+export const svgMoon = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M21 12.808c-.5 5.347-5.849 9.14-11.107 7.983C-.077 18.6 1.15 3.909 11.112 3C6.394 9.296 14.618 17.462 21 12.808"
+    ></path>
+  </svg>
+);
+export const svgSun = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+  >
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    >
+      <circle cx={12} cy={12} r={4}></circle>
+      <path d="M12 3v2m0 14.004v2M5 12H3m18 0h-2m0-7l-2 2M5 5l2 2m0 10l-2 2m14 0l-2-2"></path>
+    </g>
+  </svg>
+);

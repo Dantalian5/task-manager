@@ -10,42 +10,31 @@ import { Divider } from '@nextui-org/divider';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input, Textarea } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
-import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
+import { useForm, useFieldArray, SubmitHandler, set } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
-import { useBoard } from '@/context/BoardProvider';
-import { Task } from '@/types/global';
+import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
+import { useTask } from '@/context/TaskProvider';
+import type { Task } from '@/types/global';
 
-const svgClose = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
-    viewBox="0 0 512 512"
-  >
-    <path
-      fill="currentColor"
-      d="m289.94 256l95-95A24 24 0 0 0 351 127l-95 95l-95-95a24 24 0 0 0-34 34l95 95l-95 95a24 24 0 1 0 34 34l95-95l95 95a24 24 0 0 0 34-34Z"
-    ></path>
-  </svg>
-);
+import { svgClose } from '@/utils/svgIcons';
 
 interface EditTaskProps {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
-  action: 'add' | 'edit';
   task?: Task;
+  setTask?: (arg0: Task) => void;
 }
 export default function TaskEdit({
   isOpen,
   onOpenChange,
   onClose,
-  action,
   task,
+  setTask,
 }: EditTaskProps) {
-  const { columns } = useBoard();
+  const { columns, reload } = useSelectedBoard();
 
   const {
     register,
@@ -55,11 +44,11 @@ export default function TaskEdit({
     control,
   } = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
-    defaultValues: task || {
-      title: '',
-      description: '',
-      status: columns[0],
-      subTasks: [],
+    defaultValues: {
+      title: task?.title || '',
+      description: task?.description || '',
+      columnId: task?.columnId.toString() || columns[0].id.toString(),
+      subTasks: task?.subTasks || [],
     },
   });
 
@@ -73,15 +62,41 @@ export default function TaskEdit({
   };
   const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
     try {
-      if (action === 'add') {
-        await addTask({ ...data });
+      if (task && setTask) {
+        const response = await fetch(`/api/tasks/${task.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...data, columnId: Number(data.columnId) }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update task');
+        }
+        const updatedTask = await response.json();
+        setTask(updatedTask);
       } else {
-        await updateTask({ ...data, id: task?.id as number });
+        const response = await fetch(`/api/tasks`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...data, columnId: Number(data.columnId) }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update task');
+        }
+
+        const newTask = await response.json();
+        reload();
       }
+
       reset();
       onClose();
     } catch (error) {
-      console.error('Error in submit handler:', error);
+      console.error('Error submiting task:', error);
     }
   };
   return (
@@ -98,9 +113,7 @@ export default function TaskEdit({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>
-              {action === 'add' ? 'Add New' : 'Edit'} Task
-            </ModalHeader>
+            <ModalHeader>{task ? 'Edit' : 'Add New'} Task</ModalHeader>
             <ModalBody className="mb-4">
               <form
                 id="task-form"
@@ -193,13 +206,13 @@ export default function TaskEdit({
                   labelPlacement="outside"
                   selectionMode="single"
                   radius="sm"
-                  isInvalid={!!errors.status?.message}
-                  errorMessage={errors.status?.message}
-                  {...register('status')}
+                  isInvalid={!!errors.columnId?.message}
+                  errorMessage={errors.columnId?.message}
+                  {...register('columnId')}
                 >
                   {columns.map((column) => (
-                    <SelectItem key={column} className=" capitalize">
-                      {column}
+                    <SelectItem key={column.id} className=" capitalize">
+                      {column.name}
                     </SelectItem>
                   ))}
                 </Select>

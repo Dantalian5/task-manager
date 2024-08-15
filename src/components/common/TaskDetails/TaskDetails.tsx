@@ -11,35 +11,98 @@ import { Checkbox } from '@nextui-org/checkbox';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Button } from '@nextui-org/button';
 
-import { useBoard } from '@/context/BoardProvider/BoardProvider';
+import { useSelectedBoard } from '@/context/BoardsProvider';
 import { useTask } from '@/context/TaskProvider';
 
 interface DetailsProps {
   isOpen: boolean;
   onOpenChange: () => void;
+  onClose: () => void;
   onEdit: () => void;
 }
 export default function Details({
   isOpen,
   onOpenChange,
+  onClose,
   onEdit,
 }: DetailsProps) {
-  const { task, updateSubTask } = useTask();
-  const { columns, updateTask, deleteTask } = useBoard();
-  const { id, title, description, status, subTasks } = task;
-  const [localStatus, setLocalStatus] = useState(status);
+  const { task, setTask } = useTask();
+  const { columns, reload } = useSelectedBoard();
+
+  const { id, title, description, subTasks, columnId } = task;
+  const [localColumn, setLocalColumn] = useState(columnId.toString());
 
   const completedSubTask = subTasks.filter(
     (subTask) => subTask.isCompleted
   ).length;
 
-  const changeLocalStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!!e.target.value) {
-      setLocalStatus(e.target.value);
+  const toogleSubtask = async (subTaskId: number, status: boolean) => {
+    try {
+      const response = await fetch(`/api/subtasks/${subTaskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isCompleted: status }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update subtask');
+      }
+      const updatedSubTask = await response.json();
+      setTask((prevTask) => {
+        const updatedSubTasks = prevTask.subTasks.map((subTask) =>
+          subTask.id === subTaskId ? updatedSubTask : subTask
+        );
+        return { ...prevTask, subTasks: updatedSubTasks };
+      });
+    } catch (error) {
+      console.error('Error updating subtask:', error);
     }
   };
-  const updateState = () => {
-    status !== localStatus && updateTask({ ...task, status: localStatus });
+
+  const changeColumn = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!!e.target.value) {
+      setLocalColumn(e.target.value);
+    }
+  };
+
+  const deleteTask = async () => {
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      reload();
+      onClose();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+  const updateState = async () => {
+    if (columnId.toString() !== localColumn) {
+      try {
+        const response = await fetch(`/api/tasks/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ columnId: Number(localColumn) }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update task');
+        }
+
+        const data = await response.json();
+        reload();
+      } catch (error) {
+        console.error('Error updating task:', error);
+      }
+    }
   };
   return (
     <Modal
@@ -72,7 +135,7 @@ export default function Details({
                     label: 'text-sm font-semibold text-secondary',
                   }}
                   onChange={() =>
-                    updateSubTask(subTask.id, !subTask.isCompleted)
+                    toogleSubtask(subTask.id, !subTask.isCompleted)
                   }
                 >
                   {subTask.title}
@@ -91,25 +154,28 @@ export default function Details({
                 color="secondary"
                 aria-label="Select Status"
                 labelPlacement="outside"
-                defaultSelectedKeys={[localStatus]}
-                selectedKeys={[localStatus]}
+                defaultSelectedKeys={[localColumn]}
+                selectedKeys={[localColumn]}
                 selectionMode="single"
-                onChange={changeLocalStatus}
+                onChange={changeColumn}
               >
-                {columns.map((column: string) => (
-                  <SelectItem key={column} className=" capitalize">
-                    {column}
+                {columns.map((column) => (
+                  <SelectItem key={column.id} className=" capitalize">
+                    {column.name}
                   </SelectItem>
                 ))}
               </Select>
             </ModalBody>
             <Divider />
             <ModalFooter>
+              <Button color="danger" onClick={deleteTask} className="mr-auto">
+                Delete
+              </Button>
+              <Button color="default" onClick={onClose}>
+                Close
+              </Button>
               <Button color="primary" onClick={onEdit}>
                 Edit
-              </Button>
-              <Button color="danger" onClick={() => deleteTask(id)}>
-                Delete
               </Button>
             </ModalFooter>
           </>

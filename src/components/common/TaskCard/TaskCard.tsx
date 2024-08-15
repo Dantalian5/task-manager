@@ -9,7 +9,7 @@ import TaskEdit from '@/components/common/TaskEdit';
 import { useTask } from '@/context/TaskProvider';
 
 export default function TaskCard() {
-  const { task } = useTask();
+  const { task, setTask } = useTask();
   const { title, subTasks } = task;
   const completedSubTask = subTasks.filter(
     (subTask) => subTask.isCompleted
@@ -31,7 +31,7 @@ export default function TaskCard() {
   return (
     <>
       <Card
-        shadow="md"
+        shadow="sm"
         fullWidth
         radius="sm"
         className="p-4"
@@ -50,14 +50,15 @@ export default function TaskCard() {
       <TaskDetails
         isOpen={isTaskDetailsOpen}
         onOpenChange={onTaskDetailsOpenChange}
+        onClose={onTaskDetailsClose}
         onEdit={onTaskEditOpen}
       />
       <TaskEdit
         isOpen={isTaskEditOpen}
         onOpenChange={onTaskEditOpenChange}
         onClose={onTaskEditClose}
-        action="edit"
         task={task}
+        setTask={setTask}
       />
     </>
   );

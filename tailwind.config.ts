@@ -50,15 +50,30 @@ const config: Config = {
         },
         dark: {
           colors: {
-            background: '#000000', // or DEFAULT
-            foreground: '#ECEDEE', // or 50 to 900 DEFAULT
+            background: '#1F2937', // Un gris oscuro para el fondo
+            foreground: '#D1D5DB', // Un gris claro para el texto principal
             primary: {
-              //... 50 to 900
-              foreground: '#FFFFFF',
-              DEFAULT: '#006FEE',
+              foreground: '#FFFFFF', // Texto en blanco
+              DEFAULT: '#3B82F6', // Azul para elementos primarios
             },
+            secondary: {
+              foreground: '#E5E7EB', // Gris claro para texto secundario
+              DEFAULT: '#4B5563', // Gris más oscuro para elementos secundarios
+            },
+            success: {
+              foreground: '#D1FAE5', // Verde muy claro para el texto de éxito
+              DEFAULT: '#10B981', // Verde para los elementos de éxito
+            },
+            warning: {
+              foreground: '#FFF7ED', // Naranja claro para el texto de advertencia
+              DEFAULT: '#F59E0B', // Naranja para elementos de advertencia
+            },
+            danger: {
+              foreground: '#FEE2E2', // Rojo claro para el texto de error
+              DEFAULT: '#EF4444', // Rojo para elementos de error
+            },
+            border: '#374151', // Bordes en gris oscuro
           },
-          // ... rest of the colors
         },
         mytheme: {
           // custom theme

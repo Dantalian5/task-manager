@@ -13,31 +13,35 @@ export async function PUT(
   const id = params?.id as string;
   const data = await req.json();
 
+  console.log('data:', data);
+
   try {
-    const existingSubTasks = await prisma.subTask.findMany({
-      where: { taskId: parseInt(id, 10) },
-    });
+    if (data.subTasks) {
+      const existingSubTasks = await prisma.subTask.findMany({
+        where: { taskId: parseInt(id, 10) },
+      });
 
-    const subTaskIds = data.subTasks
-      .map((subTask: SubTask) => subTask.id)
-      .filter((id: number) => id !== null);
+      const subTaskIds = data.subTasks
+        .map((subTask: SubTask) => subTask.id)
+        .filter((id: number) => id !== null);
 
-    const subTasksToDelete = existingSubTasks.filter(
-      (subTask) => !subTaskIds.includes(subTask.id)
-    );
+      const subTasksToDelete = existingSubTasks.filter(
+        (subTask) => !subTaskIds.includes(subTask.id)
+      );
 
-    await prisma.subTask.deleteMany({
-      where: { id: { in: subTasksToDelete.map((subTask) => subTask.id) } },
-    });
+      await prisma.subTask.deleteMany({
+        where: { id: { in: subTasksToDelete.map((subTask) => subTask.id) } },
+      });
+    }
 
     const updatedTask = await prisma.task.update({
       where: { id: parseInt(id, 10) },
       data: {
         title: data.title,
         description: data.description,
-        status: data.status,
+        columnId: Number(data.columnId),
         subTasks: {
-          upsert: data.subTasks.map((subTask: SubTask) => ({
+          upsert: data.subTasks?.map((subTask: SubTask) => ({
             where: { id: subTask.id || 0 },
             update: { title: subTask.title },
             create: { title: subTask.title },
@@ -46,6 +50,18 @@ export async function PUT(
       },
       include: { subTasks: true },
     });
+    // data: {
+    //   title: data.title,
+    //   description: data.description,
+    //   status: data.status,
+    //   subTasks: {
+    //     upsert: data.subTasks.map((subTask: SubTask) => ({
+    //       where: { id: subTask.id || 0 },
+    //       update: { title: subTask.title },
+    //       create: { title: subTask.title },
+    //     })),
+    //   },
+    // },
 
     return NextResponse.json(updatedTask);
   } catch (error) {

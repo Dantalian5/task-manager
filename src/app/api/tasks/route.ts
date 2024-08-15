@@ -9,8 +9,7 @@ export async function POST(req: NextRequest) {
       data: {
         title: data.title,
         description: data.description,
-        status: data.status,
-        boardId: data.boardId,
+        columnId: data.columnId,
         subTasks: {
           create: data.subTasks.map(
             (subTask: { title: string; isCompleted: boolean }) => ({

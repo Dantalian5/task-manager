@@ -2,8 +2,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import useSWR, { mutate } from 'swr';
 
+import type { Board, Column } from '@/types/global';
+
 interface BoardsContextProps {
-  boards: Board[];
+  boards: Omit<Board, 'columns'>[];
   isLoading: boolean;
   error: any;
   reload: () => void;
@@ -11,7 +13,7 @@ interface BoardsContextProps {
   changeSelectedBoard: (boardId: number | null) => void;
 }
 interface SelectedBoardContextProps {
-  board: FullBoard;
+  board: Board;
   columns: Column[];
   isLoading: boolean;
   error: any;
@@ -90,104 +92,3 @@ export const SelectedBoardProvider = ({
 
 export const useBoards = () => useContext(BoardsContext);
 export const useSelectedBoard = () => useContext(SelectedBoardContext);
-
-//---------------------------------------------------------------------
-interface SubTask {
-  id: number;
-  title: string;
-  isCompleted: boolean;
-}
-interface NewTask {
-  title: string;
-  description: string;
-  status: string;
-  subTasks: {
-    id: number | null;
-    title: string;
-  }[];
-}
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  status: string;
-  subTasks: SubTask[];
-}
-interface Column {
-  id: number;
-  name: string;
-  tasks: Task[];
-}
-interface Board {
-  id: number;
-  title: string;
-}
-interface FullBoard extends Board {
-  columns: Column[];
-}
-
-// const addTask = async (newTask: NewTask) => {
-//   try {
-//     const response = await fetch(`/api/tasks`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ ...newTask, boardId: selectedBoardId }),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to update task');
-//     }
-
-//     const data = await response.json();
-//     // setSelectedBoard((prev) => ({
-//     //   ...prev,
-//     //   tasks: [...prev.tasks, data],
-//     // }));
-//   } catch (error) {
-//     console.error('Error updating task:', error);
-//   }
-// };
-// const updateTask = async (updatedTask: UpdatedTask) => {
-//   try {
-//     const response = await fetch(`/api/tasks/${updatedTask.id}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(updatedTask),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to update task');
-//     }
-
-//     const data = await response.json();
-//     // setSelectedBoard((prev) => ({
-//     //   ...prev,
-//     //   tasks: prev.tasks.map((task) => (task.id === data.id ? data : task)), // Actualizamos la tarea específica
-//     // }));
-//   } catch (error) {
-//     console.error('Error updating task:', error);
-//   }
-// };
-
-// const deleteTask = async (taskId: number) => {
-//   try {
-//     const response = await fetch(`/api/tasks/${taskId}`, {
-//       method: 'DELETE',
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to delete task');
-//     }
-
-//     // setSelectedBoard((prevBoard) => ({
-//     //   ...prevBoard,
-//     //   tasks: prevBoard.tasks.filter((task) => task.id !== taskId),
-//     // }));
-//   } catch (error) {
-//     console.error('Error deleting task:', error);
-//   }
-// };

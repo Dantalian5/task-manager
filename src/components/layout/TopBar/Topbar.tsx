@@ -7,7 +7,7 @@ import { Tooltip } from '@nextui-org/tooltip';
 
 import TaskEdit from '@/components/common/TaskEdit';
 import EditBoard from '@/components/common/EditBoard';
-import { svgEditBoard } from '@/utils/svgIcons';
+import { svgEditBoard, svgPlus } from '@/utils/svgIcons';
 
 interface TopBoardProps {
   title: string;
@@ -26,18 +26,21 @@ export default function Topbar({ title }: TopBoardProps) {
     onClose: onBoardEditClose,
   } = useDisclosure();
   return (
-    <div className="flex w-full items-center p-4 bg-background border-x border-b shadow-md justify-between">
-      <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
+    <div className="flex w-full items-center px-4 py-3 sm:py-4 bg-background border-x border-b shadow-md justify-between gap-4">
+      <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+        {title}
+      </h2>
       <div className="flex items-center justify-center gap-1">
         <Button
           color="primary"
           size="lg"
           variant="solid"
           radius="lg"
-          className="text-base font-semibold"
+          className="text-base font-semibold px-0 sm:px-6 min-w-12"
           onClick={onTaskEditOpen}
+          startContent={svgPlus}
         >
-          + Add New Task
+          <span className="hidden sm:inline">Add New Task</span>
         </Button>
         <Tooltip content="Edit current board">
           <Button
@@ -54,12 +57,11 @@ export default function Topbar({ title }: TopBoardProps) {
           </Button>
         </Tooltip>
       </div>
-      {/* <TaskEdit
+      <TaskEdit
         isOpen={isTaskEditOpen}
         onOpenChange={onTaskEditOpenChange}
         onClose={onTaskEditClose}
-        action={'add'}
-      /> */}
+      />
       <EditBoard
         isOpen={isBoardEditOpen}
         onOpenChange={onBoardEditOpenChange}

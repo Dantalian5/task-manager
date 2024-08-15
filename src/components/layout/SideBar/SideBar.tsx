@@ -5,13 +5,18 @@ import { useDisclosure } from '@nextui-org/react';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { Divider } from '@nextui-org/divider';
 import { ScrollShadow } from '@nextui-org/scroll-shadow';
+import { Switch } from '@nextui-org/switch';
+import { useTheme } from 'next-themes';
 
 import UserBtn from '@/components/common/UserBtn';
 import AddBoard from '@/components/common/AddBoard';
 import { useBoards } from '@/context/BoardsProvider';
 import { svgAddBoard, svgPlus, svgBoard, svgMenu } from '@/utils/svgIcons';
+import { Span } from 'next/dist/trace';
+import { svgSun, svgMoon } from '@/utils/svgIcons';
 
 export default function SideBar() {
+  const { theme, setTheme } = useTheme();
   const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
   const { boards, selectedBoardId, changeSelectedBoard, isLoading } =
     useBoards();
@@ -22,8 +27,8 @@ export default function SideBar() {
   if (isLoading) return <div>Loading...</div>;
   if (!boards || boards.length === 0) return <div>No boards found</div>;
   return (
-    <div className="w-full sm:max-w-[260px] lg:max-w-[300px] flex flex-col">
-      <div className="flex w-full items-center p-5 bg-background border-x border-b shadow-md justify-between">
+    <div className="hidden w-full sm:max-w-[260px] lg:max-w-[300px] sm:flex flex-col">
+      <div className="flex w-full items-center p-5 bg-background border-r border-b shadow-md justify-between">
         <UserBtn />
       </div>
       <div className="overflow-scroll">
@@ -40,6 +45,7 @@ export default function SideBar() {
               tabList: 'gap-4 w-full relative rounded-none pl-0 py-4 pr-4',
               cursor: 'w-full rounded-l-none rounded-r-full',
               tab: 'h-12 justify-start',
+              tabContent: 'w-full overflow-hidden font-semibold text-base',
             }}
           >
             {boards.map((board) => (
@@ -47,9 +53,11 @@ export default function SideBar() {
                 key={board.id}
                 id={String(board.id)}
                 title={
-                  <div className="flex items-center space-x-2 text-base">
-                    {svgBoard}
-                    <span className="font-semibold">{board.title}</span>
+                  <div className="flex items-center overflow-hidden text-base gap-2">
+                    <span className="text-base">{svgBoard}</span>
+                    <span className="overflow-hidden overflow-ellipsis">
+                      {board.title}
+                    </span>
                   </div>
                 }
               />
@@ -65,6 +73,17 @@ export default function SideBar() {
       >
         {svgAddBoard} + Create New Board
       </button>
+      <div className="flex p-3 items-center justify-start mt-auto">
+        <Switch
+          size="md"
+          color="primary"
+          startContent={svgSun}
+          endContent={svgMoon}
+          isSelected={theme === 'light'}
+          onValueChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        ></Switch>
+      </div>
+
       <AddBoard isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
     </div>
   );
