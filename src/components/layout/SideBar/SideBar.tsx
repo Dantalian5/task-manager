@@ -27,8 +27,8 @@ export default function SideBar() {
   if (isLoading) return <div>Loading...</div>;
   if (!boards || boards.length === 0) return <div>No boards found</div>;
   return (
-    <div className="hidden w-full sm:max-w-[260px] lg:max-w-[300px] sm:flex flex-col">
-      <div className="flex w-full items-center p-5 bg-background border-r border-b shadow-md justify-between">
+    <div className="hidden w-full sm:max-w-[260px] shadow-right lg:max-w-[300px] sm:flex flex-col border-r border-border/10 relative z-20 bg-gradient-to-r from-background/5 to-background-light/20 backdrop-blur-sm">
+      <div className="flex w-full items-center p-5 border-b border-border/10 shadow-bottom justify-between bg-gradient-to-b from-background/5 to-background-light/20">
         <UserBtn />
       </div>
       <div className="overflow-scroll">
@@ -65,7 +65,6 @@ export default function SideBar() {
           </Tabs>
         </ScrollShadow>
       </div>
-
       <Divider className="w-[80%] mx-auto" />
       <button
         className="w-full flex items-center justify-start p-3 gap-2 text-base font-semibold text-primary"
@@ -83,7 +82,6 @@ export default function SideBar() {
           onValueChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         ></Switch>
       </div>
-
       <AddBoard isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
     </div>
   );

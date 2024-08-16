@@ -26,11 +26,11 @@ export default function Topbar({ title }: TopBoardProps) {
     onClose: onBoardEditClose,
   } = useDisclosure();
   return (
-    <div className="flex w-full items-center px-4 py-3 sm:py-4 bg-background border-x border-b shadow-md justify-between gap-4">
+    <div className="flex w-full items-center px-4 py-3 sm:py-4 border-b border-border/10 justify-between gap-4 relative z-20 backdrop-blur-sm shadow-bottom bg-gradient-to-b from-background/5 to-background-light/20">
       <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
         {title}
       </h2>
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex items-center justify-center gap-1 sm:gap-3">
         <Button
           color="primary"
           size="lg"

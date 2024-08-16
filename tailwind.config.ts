@@ -10,10 +10,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        bottom:
+          '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);',
+        right:
+          '4px 0 6px -1px rgb(0 0 0 / 0.1), 2px 0 4px -2px rgb(0 0 0 / 0.1);',
+      },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'space-gradient': `radial-gradient(circle at 20% 20%, var(--tw-gradient-stops)),
+        radial-gradient(circle at 90% 50%, var(--tw-gradient-stops), transparent 80%)`,
       },
     },
   },
@@ -50,7 +55,10 @@ const config: Config = {
         },
         dark: {
           colors: {
-            background: '#1F2937', // Un gris oscuro para el fondo
+            background: {
+              DEFAULT: '#0B132B', // Fondo principal: gris oscuro
+              light: '#1C2541', // Fondo secundario: un poco más claro para secciones
+            },
             foreground: '#D1D5DB', // Un gris claro para el texto principal
             primary: {
               foreground: '#FFFFFF', // Texto en blanco
@@ -73,17 +81,6 @@ const config: Config = {
               DEFAULT: '#EF4444', // Rojo para elementos de error
             },
             border: '#374151', // Bordes en gris oscuro
-          },
-        },
-        mytheme: {
-          // custom theme
-          extend: 'dark',
-          colors: {
-            primary: {
-              DEFAULT: '#BEF264',
-              foreground: '#000000',
-            },
-            focus: '#BEF264',
           },
         },
       },

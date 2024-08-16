@@ -8,7 +8,7 @@ import {
 
 export default async function Home() {
   return (
-    <div className="flex flex-col sm:flex-row items-stretch h-svh overflow-hidden">
+    <div className="flex flex-col sm:flex-row items-stretch h-svh overflow-hidden relative bg-space-gradient from-background to-background-light ">
       <BoardsProvider>
         <SelectedBoardProvider>
           <SideBar />
