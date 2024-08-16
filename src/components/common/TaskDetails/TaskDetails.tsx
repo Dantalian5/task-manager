@@ -10,9 +10,11 @@ import { Divider } from '@nextui-org/divider';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Button } from '@nextui-org/button';
+import { Spinner } from '@nextui-org/spinner';
 
 import { useSelectedBoard } from '@/context/BoardsProvider';
 import { useTask } from '@/context/TaskProvider';
+import { svgDelete } from '@/utils/svgIcons';
 
 interface DetailsProps {
   isOpen: boolean;
@@ -28,6 +30,7 @@ export default function Details({
 }: DetailsProps) {
   const { task, setTask } = useTask();
   const { columns, reload } = useSelectedBoard();
+  const [isSaving, setIsSaving] = useState(false);
 
   const { id, title, description, subTasks, columnId } = task;
   const [localColumn, setLocalColumn] = useState(columnId.toString());
@@ -67,6 +70,7 @@ export default function Details({
   };
 
   const deleteTask = async () => {
+    setIsSaving(true);
     try {
       const response = await fetch(`/api/tasks/${id}`, {
         method: 'DELETE',
@@ -81,6 +85,7 @@ export default function Details({
     } catch (error) {
       console.error('Error deleting task:', error);
     }
+    setIsSaving(false);
   };
   const updateState = async () => {
     if (columnId.toString() !== localColumn) {
@@ -110,14 +115,21 @@ export default function Details({
       onOpenChange={onOpenChange}
       placement="center"
       onClose={updateState}
+      backdrop="blur"
+      scrollBehavior="inside"
       classNames={{
         wrapper: 'w-full',
-        base: 'p-2 w-[90%] max-w-[480px]',
+        base: 'p-2 w-[90%] max-w-[480px] bg-card-gradient from-background to-background-light',
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
+            {isSaving && (
+              <div className="inset-0 absolute bg-background/50 z-50 flex items-center justify-center backdrop-blur-sm">
+                <Spinner size="lg" />
+              </div>
+            )}
             <ModalHeader>{title}</ModalHeader>
             <ModalBody className="mb-4">
               <p className="text-sm text-secondary">{description}</p>
@@ -168,8 +180,13 @@ export default function Details({
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button color="danger" onClick={deleteTask} className="mr-auto">
-                Delete
+              <Button
+                color="danger"
+                onClick={deleteTask}
+                startContent={svgDelete}
+                className="mr-auto px-0 sm:px-6 min-w-12"
+              >
+                <span className="hidden sm:inline">Delete</span>
               </Button>
               <Button color="default" onClick={onClose}>
                 Close

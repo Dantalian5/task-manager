@@ -50,18 +50,6 @@ export async function PUT(
       },
       include: { subTasks: true },
     });
-    // data: {
-    //   title: data.title,
-    //   description: data.description,
-    //   status: data.status,
-    //   subTasks: {
-    //     upsert: data.subTasks.map((subTask: SubTask) => ({
-    //       where: { id: subTask.id || 0 },
-    //       update: { title: subTask.title },
-    //       create: { title: subTask.title },
-    //     })),
-    //   },
-    // },
 
     return NextResponse.json(updatedTask);
   } catch (error) {

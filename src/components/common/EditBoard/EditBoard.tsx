@@ -11,12 +11,13 @@ import {
 import { Divider } from '@nextui-org/divider';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
-import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
+import { useForm, useFieldArray, SubmitHandler, set } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Spinner } from '@nextui-org/spinner';
 
 import { type BoardSchema, boardSchema } from '@/schemas/boardSchema';
 import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
-import { svgClose } from '@/utils/svgIcons';
+import { svgClose, svgDelete } from '@/utils/svgIcons';
 
 interface BoardEditProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export default function BoardEdit({
 }: BoardEditProps) {
   const { changeSelectedBoard, reload: reloadBoards } = useBoards();
   const { board, reload } = useSelectedBoard();
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -64,6 +66,7 @@ export default function BoardEdit({
   }, [board, reset, replace]);
 
   const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
+    setIsSaving(true);
     try {
       const payload = {
         id: board.id,
@@ -93,12 +96,14 @@ export default function BoardEdit({
     } catch (error) {
       console.error('Error updating board:', error);
     }
+    setIsSaving(false);
   };
   const onCloseModal = () => {
     reset();
     onClose();
   };
   const onDelete = async () => {
+    setIsSaving(true);
     try {
       const response = await fetch(`/api/boards/${board.id}`, {
         method: 'DELETE',
@@ -115,6 +120,7 @@ export default function BoardEdit({
     } catch (error) {
       console.error('Error deleting board:', error);
     }
+    setIsSaving(false);
   };
 
   return (
@@ -124,14 +130,21 @@ export default function BoardEdit({
       placement="center"
       className="w-[90%]"
       onClose={onCloseModal}
+      backdrop="blur"
+      scrollBehavior="inside"
       classNames={{
         wrapper: 'w-full',
-        base: 'p-2 w-[90%] max-w-[480px]',
+        base: 'p-2 w-[90%] max-w-[480px] bg-card-gradient from-background to-background-light',
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
+            {isSaving && (
+              <div className="inset-0 absolute bg-background/50 z-50 flex items-center justify-center backdrop-blur-sm">
+                <Spinner size="lg" />
+              </div>
+            )}
             <ModalHeader className="flex flex-col gap-1">
               Edit Board
             </ModalHeader>
@@ -202,6 +215,7 @@ export default function BoardEdit({
                 onClick={onDelete}
                 className="mr-auto"
                 type="button"
+                startContent={svgDelete}
               >
                 Delete
               </Button>

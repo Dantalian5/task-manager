@@ -37,7 +37,7 @@ export default function TaskCard() {
         className="p-4"
         isPressable
         onPress={onTaskDetailsOpen}
-        classNames={{ base: '' }}
+        classNames={{ base: 'bg-card-gradient from-card to-card-light' }}
       >
         <CardHeader className="p-0 mb-2">
           <p className="font-bold text-base text-start">{title}</p>

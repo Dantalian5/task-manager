@@ -46,7 +46,7 @@ export default function Topbar({ title }: TopBoardProps) {
           <Button
             isIconOnly
             size="lg"
-            color="primary"
+            color="success"
             variant="bordered"
             aria-label="Take a photo"
             radius="lg"

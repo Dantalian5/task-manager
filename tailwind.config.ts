@@ -1,3 +1,4 @@
+import { card } from '@nextui-org/react';
 import type { Config } from 'tailwindcss';
 const { nextui } = require('@nextui-org/react');
 
@@ -17,8 +18,10 @@ const config: Config = {
           '4px 0 6px -1px rgb(0 0 0 / 0.1), 2px 0 4px -2px rgb(0 0 0 / 0.1);',
       },
       backgroundImage: {
-        'space-gradient': `radial-gradient(circle at 20% 20%, var(--tw-gradient-stops)),
-        radial-gradient(circle at 90% 50%, var(--tw-gradient-stops), transparent 80%)`,
+        'space-gradient':
+          'radial-gradient(circle at top left, var(--tw-gradient-stops), transparent 80%), radial-gradient(circle at 110% 60%, var(--tw-gradient-stops), transparent 50%)',
+        'card-gradient':
+          'radial-gradient(circle at top left, var(--tw-gradient-stops))',
       },
     },
   },
@@ -28,19 +31,22 @@ const config: Config = {
       themes: {
         light: {
           colors: {
-            background: '#F7F8FA',
-            foreground: '#2E2E2E',
+            background: {
+              DEFAULT: '#EAF4FC', // Azul cielo claro suave
+              light: '#FFFFFF', // Blanco puro, ideal para áreas destacadas
+            },
+            foreground: '#334E68',
             primary: {
               foreground: '#FFFFFF',
-              DEFAULT: '#3B82F6',
+              DEFAULT: '#3A86FF',
             },
             secondary: {
               foreground: '#FFFFFF',
               DEFAULT: '#6B7280',
             },
             success: {
-              foreground: '#FFFFFF',
-              DEFAULT: '#10B981',
+              foreground: '#E8FDF5',
+              DEFAULT: '#06D6A0',
             },
             warning: {
               foreground: '#FFFFFF',
@@ -50,37 +56,45 @@ const config: Config = {
               foreground: '#FFFFFF',
               DEFAULT: '#EF4444',
             },
-            border: '#E5E7EB', // Bordes en gris claro
+            border: '#D1E1EB',
+            card: {
+              DEFAULT: '#FFFFFF',
+              light: '#F9FAFB',
+            },
           },
         },
         dark: {
           colors: {
             background: {
-              DEFAULT: '#0B132B', // Fondo principal: gris oscuro
-              light: '#1C2541', // Fondo secundario: un poco más claro para secciones
+              DEFAULT: '#0A0F1F',
+              light: '#16203A',
             },
-            foreground: '#D1D5DB', // Un gris claro para el texto principal
+            foreground: '#E5E7EB',
             primary: {
-              foreground: '#FFFFFF', // Texto en blanco
-              DEFAULT: '#3B82F6', // Azul para elementos primarios
+              foreground: '#FFFFFF',
+              DEFAULT: '#2563EB',
             },
             secondary: {
-              foreground: '#E5E7EB', // Gris claro para texto secundario
-              DEFAULT: '#4B5563', // Gris más oscuro para elementos secundarios
+              foreground: '#FFFFFF',
+              DEFAULT: '#9CA3AF',
             },
             success: {
-              foreground: '#D1FAE5', // Verde muy claro para el texto de éxito
-              DEFAULT: '#10B981', // Verde para los elementos de éxito
+              foreground: '#D1FAE5',
+              DEFAULT: '#10B981',
             },
             warning: {
-              foreground: '#FFF7ED', // Naranja claro para el texto de advertencia
-              DEFAULT: '#F59E0B', // Naranja para elementos de advertencia
+              foreground: '#FFF7ED',
+              DEFAULT: '#F59E0B',
             },
             danger: {
-              foreground: '#FEE2E2', // Rojo claro para el texto de error
-              DEFAULT: '#EF4444', // Rojo para elementos de error
+              foreground: '#FEE2E2',
+              DEFAULT: '#EF4444',
             },
-            border: '#374151', // Bordes en gris oscuro
+            border: '#2D3748',
+            card: {
+              DEFAULT: '#16203A',
+              light: '#1E2A47',
+            },
           },
         },
       },

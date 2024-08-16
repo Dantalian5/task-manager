@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Modal,
@@ -13,6 +13,7 @@ import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Spinner } from '@nextui-org/spinner';
 
 import { useBoards } from '@/context/BoardsProvider';
 import { svgClose } from '@/utils/svgIcons';
@@ -30,6 +31,7 @@ export default function AddBoard({
   onClose,
 }: AddBoardProps) {
   const { changeSelectedBoard } = useBoards();
+  const [isSaving, setIsSaving] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,6 +44,7 @@ export default function AddBoard({
   });
 
   const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
+    setIsSaving(true);
     try {
       const response = await fetch(`/api/boards`, {
         method: 'POST',
@@ -56,16 +59,22 @@ export default function AddBoard({
       }
       const newBoard = await response.json();
       changeSelectedBoard(newBoard.id);
+      reset();
       onClose();
     } catch (error) {
       console.error('Error updating board:', error);
     }
+    setIsSaving(false);
   };
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'columns' as never,
   });
+  useEffect(() => {
+    reset();
+    replace([]);
+  }, [isOpen]);
 
   const onCloseModal = () => {
     reset();
@@ -78,14 +87,21 @@ export default function AddBoard({
       placement="center"
       className="w-[90%]"
       onClose={onCloseModal}
+      backdrop="blur"
+      scrollBehavior="inside"
       classNames={{
         wrapper: 'w-full',
-        base: 'p-2 w-[90%] max-w-[480px]',
+        base: 'p-2 w-[90%] max-w-[480px] bg-card-gradient from-background to-background-light',
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
+            {isSaving && (
+              <div className="inset-0 absolute bg-background/50 z-50 flex items-center justify-center backdrop-blur-sm">
+                <Spinner size="lg" />
+              </div>
+            )}
             <ModalHeader className="flex flex-col gap-1">
               Add New Board
             </ModalHeader>

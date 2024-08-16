@@ -31,7 +31,7 @@ export default function SideBar() {
       <div className="flex w-full items-center p-5 border-b border-border/10 shadow-bottom justify-between bg-gradient-to-br from-background/10 to-background-light/20">
         <UserBtn />
       </div>
-      <div className="flex w-full flex-col flex-grow bg-gradient-to-r from-background/5 to-background-light/20 backdrop-blur-sm shadow-right">
+      <div className="flex w-full flex-col overflow-hidden flex-grow bg-gradient-to-r from-background/5 to-background-light/20 backdrop-blur-sm shadow-right">
         <div className="overflow-scroll">
           <ScrollShadow className="w-full h-full">
             <Tabs

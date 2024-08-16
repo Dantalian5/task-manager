@@ -1,4 +1,7 @@
 'use client';
+
+import React, { useEffect } from 'react';
+
 import {
   Modal,
   ModalContent,
@@ -12,6 +15,7 @@ import { Input, Textarea } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, useFieldArray, SubmitHandler, set } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Spinner } from '@nextui-org/spinner';
 
 import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
 import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
@@ -35,6 +39,7 @@ export default function TaskEdit({
   setTask,
 }: EditTaskProps) {
   const { columns, reload } = useSelectedBoard();
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const {
     register,
@@ -47,20 +52,31 @@ export default function TaskEdit({
     defaultValues: {
       title: task?.title || '',
       description: task?.description || '',
-      columnId: task?.columnId.toString() || columns[0].id.toString(),
+      columnId: task?.columnId.toString() || columns[0]?.id.toString() || '',
       subTasks: task?.subTasks || [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'subTasks',
   });
+
+  useEffect(() => {
+    reset({
+      title: task?.title || '',
+      description: task?.description || '',
+      columnId: task?.columnId.toString() || columns[0]?.id.toString() || '',
+    });
+    replace(task?.subTasks || []);
+  }, [isOpen]);
+
   const onCloseModal = () => {
     onClose();
     reset();
   };
   const onSubmit: SubmitHandler<TaskSchema> = async (data) => {
+    setIsSaving(true);
     try {
       if (task && setTask) {
         const response = await fetch(`/api/tasks/${task.id}`, {
@@ -92,27 +108,35 @@ export default function TaskEdit({
         const newTask = await response.json();
         reload();
       }
-
       reset();
+      replace(task?.subTasks || []);
       onClose();
     } catch (error) {
       console.error('Error submiting task:', error);
     }
+    setIsSaving(false);
   };
   return (
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
+      backdrop="blur"
+      scrollBehavior="inside"
       classNames={{
         wrapper: 'w-full',
-        base: 'p-2 w-[90%] max-w-[480px]',
+        base: 'p-2 w-[90%] max-w-[480px] bg-card-gradient from-background to-background-light',
       }}
       onClose={onCloseModal}
     >
       <ModalContent>
         {(onClose) => (
           <>
+            {isSaving && (
+              <div className="inset-0 absolute bg-background/50 z-50 flex items-center justify-center backdrop-blur-sm">
+                <Spinner size="lg" />
+              </div>
+            )}
             <ModalHeader>{task ? 'Edit' : 'Add New'} Task</ModalHeader>
             <ModalBody className="mb-4">
               <form
