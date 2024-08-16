@@ -7,12 +7,11 @@ import { Tooltip } from '@nextui-org/tooltip';
 
 import TaskEdit from '@/components/common/TaskEdit';
 import EditBoard from '@/components/common/EditBoard';
+import { useSelectedBoard } from '@/context/BoardsProvider';
 import { svgEditBoard, svgPlus } from '@/utils/svgIcons';
 
-interface TopBoardProps {
-  title: string;
-}
-export default function Topbar({ title }: TopBoardProps) {
+export default function Topbar() {
+  const { board, isLoading } = useSelectedBoard();
   const {
     isOpen: isTaskEditOpen,
     onOpen: onTaskEditOpen,
@@ -25,49 +24,60 @@ export default function Topbar({ title }: TopBoardProps) {
     onOpenChange: onBoardEditOpenChange,
     onClose: onBoardEditClose,
   } = useDisclosure();
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <div className="flex w-full items-center px-4 py-3 sm:py-4 border-b border-border/10 justify-between gap-4 relative z-20 backdrop-blur-sm shadow-bottom bg-gradient-to-b from-background/5 to-background-light/20">
-      <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
-        {title}
-      </h2>
-      <div className="flex items-center justify-center gap-1 sm:gap-3">
-        <Button
-          color="primary"
-          size="lg"
-          variant="solid"
-          radius="lg"
-          className="text-base font-semibold px-0 sm:px-6 min-w-12"
-          onClick={onTaskEditOpen}
-          startContent={svgPlus}
-        >
-          <span className="hidden sm:inline">Add New Task</span>
-        </Button>
-        <Tooltip content="Edit current board">
-          <Button
-            isIconOnly
-            size="lg"
-            color="success"
-            variant="bordered"
-            aria-label="Take a photo"
-            radius="lg"
-            className="text-2xl"
-            onClick={onBoardEditOpen}
-          >
-            {svgEditBoard}
-          </Button>
-        </Tooltip>
-      </div>
-      <TaskEdit
-        isOpen={isTaskEditOpen}
-        onOpenChange={onTaskEditOpenChange}
-        onClose={onTaskEditClose}
-      />
-      <EditBoard
-        isOpen={isBoardEditOpen}
-        onOpenChange={onBoardEditOpenChange}
-        onClose={onBoardEditClose}
-        action="edit"
-      />
+      {board && (
+        <>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+            {board?.title}
+          </h2>
+          <div className="flex items-center justify-center gap-1 sm:gap-3">
+            {board?.columns.length > 0 && (
+              <Button
+                color="primary"
+                size="lg"
+                variant="solid"
+                radius="lg"
+                className="text-base font-semibold px-0 sm:px-6 min-w-12"
+                onClick={onTaskEditOpen}
+                startContent={svgPlus}
+              >
+                <span className="hidden sm:inline">Add New Task</span>
+              </Button>
+            )}
+            <Tooltip content="Edit current board">
+              <Button
+                isIconOnly
+                size="lg"
+                color="success"
+                variant="bordered"
+                aria-label="Take a photo"
+                radius="lg"
+                className="text-2xl"
+                onClick={onBoardEditOpen}
+              >
+                {svgEditBoard}
+              </Button>
+            </Tooltip>
+          </div>
+          <TaskEdit
+            isOpen={isTaskEditOpen}
+            onOpenChange={onTaskEditOpenChange}
+            onClose={onTaskEditClose}
+          />
+          <EditBoard
+            isOpen={isBoardEditOpen}
+            onOpenChange={onBoardEditOpenChange}
+            onClose={onBoardEditClose}
+            action="edit"
+          />
+        </>
+      )}
     </div>
   );
 }

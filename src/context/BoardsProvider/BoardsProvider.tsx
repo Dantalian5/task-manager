@@ -11,6 +11,7 @@ interface BoardsContextProps {
   reload: () => void;
   selectedBoardId: number | null;
   changeSelectedBoard: (boardId: number | null) => void;
+  setSelectedBoardId: (boardId: number | null) => void;
 }
 interface SelectedBoardContextProps {
   board: Board;
@@ -37,12 +38,13 @@ export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const changeSelectedBoard = async (boardId: number | null) => {
     await reload();
-    setSelectedBoardId(boardId ? boardId : boards[0].id);
+    setSelectedBoardId(boardId);
   };
   useEffect(() => {
     if (boards && boards.length > 0 && selectedBoardId === null) {
       setSelectedBoardId(boards[0].id);
     }
+    console.log('entro aqui', boards?.length);
   }, [boards, selectedBoardId]);
 
   return (
@@ -54,6 +56,7 @@ export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
         error,
         selectedBoardId,
         changeSelectedBoard,
+        setSelectedBoardId,
       }}
     >
       {children}
@@ -67,6 +70,7 @@ export const SelectedBoardProvider = ({
   children: React.ReactNode;
 }) => {
   const { selectedBoardId: id } = useBoards();
+  console.log(id);
   const {
     data: board,
     error,
@@ -76,7 +80,6 @@ export const SelectedBoardProvider = ({
     id: column.id,
     name: column.name,
   }));
-
   const reload = async () => {
     await mutate(`/api/boards/${id}`);
   };
