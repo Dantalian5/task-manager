@@ -44,7 +44,6 @@ export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
     if (boards && boards.length > 0 && selectedBoardId === null) {
       setSelectedBoardId(boards[0].id);
     }
-    console.log('entro aqui', boards?.length);
   }, [boards, selectedBoardId]);
 
   return (
@@ -70,7 +69,6 @@ export const SelectedBoardProvider = ({
   children: React.ReactNode;
 }) => {
   const { selectedBoardId: id } = useBoards();
-  console.log(id);
   const {
     data: board,
     error,

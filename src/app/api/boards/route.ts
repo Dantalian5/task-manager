@@ -15,6 +15,11 @@ export const GET = auth(async function GET(req) {
       select: {
         id: true,
         title: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 

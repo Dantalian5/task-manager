@@ -15,10 +15,20 @@ export async function GET(
       },
       include: {
         columns: {
+          orderBy: {
+            createdAt: 'asc',
+          },
           include: {
             tasks: {
+              orderBy: {
+                createdAt: 'asc',
+              },
               include: {
-                subTasks: true,
+                subTasks: {
+                  orderBy: {
+                    createdAt: 'asc',
+                  },
+                },
               },
             },
           },

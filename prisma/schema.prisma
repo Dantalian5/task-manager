@@ -18,6 +18,8 @@ model Board {
   userId      Int
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   columns     Column[]
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt  
 }
 model Column {
   id       Int    @id @default(autoincrement())
@@ -25,6 +27,8 @@ model Column {
   boardId  Int
   board    Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   tasks    Task[]
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt  
 }
 model Task {
   id          Int       @id @default(autoincrement())
@@ -33,6 +37,8 @@ model Task {
   columnId    Int?
   column      Column?    @relation(fields: [columnId], references: [id], onDelete: Cascade)
   subTasks    SubTask[]
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt  
 }
 model SubTask {
   id     Int    @id @default(autoincrement())
@@ -40,4 +46,6 @@ model SubTask {
   isCompleted Boolean  @default(false)
   taskId Int
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt  
 }

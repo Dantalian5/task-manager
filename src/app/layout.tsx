@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={jakarta.className}>
+      <body
+        className={`${jakarta.className} bg-space-gradient from-background to-background-light w-full h-full min-h-svh`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
