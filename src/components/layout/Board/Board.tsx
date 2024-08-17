@@ -14,25 +14,6 @@ import { svgAddBoard } from '@/utils/svgIcons';
 export default function Board() {
   const { board, isLoading } = useSelectedBoard();
 
-  // if (selectedBoard?.columns.length === 0) {
-  //   return (
-  //     <main className="bg-slate-100 min-h-svh flex justify-center items-center p-4">
-  //       <div className="flex flex-col items-center justify-center gap-6">
-  //         <p className="text-lg font-bold text-center opacity-50">
-  //           This board is empty. Create a new column to get started.
-  //         </p>
-  //         <Button
-  //           size="lg"
-  //           color="primary"
-  //           radius="full"
-  //           className="text-base font-bold"
-  //         >
-  //           + Add New Column
-  //         </Button>
-  //       </div>
-  //     </main>
-  //   );
-  // }
   if (isLoading) {
     return (
       <main className="w-full flex flex-col items-center justify-center flex-grow ">

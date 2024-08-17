@@ -41,7 +41,6 @@ function SidebarThemeSwitch() {
     </div>
   );
 }
-
 function Sidebar({ children = null }: { children?: React.ReactNode }) {
   return (
     <div className="hidden w-full sm:max-w-[260px] lg:max-w-[300px] sm:flex flex-col border-r border-border/10 relative z-2 ">
