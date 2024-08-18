@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${jakarta.className} bg-space-gradient from-background to-background-light w-full h-full min-h-svh`}
+        className={`${jakarta.className} bg-space-gradient from-background to-background-light w-full h-full min-h-svh flex flex-col items-stretch justify-stretch`}
       >
         <Providers>{children}</Providers>
       </body>

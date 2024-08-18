@@ -22,6 +22,7 @@ export default function SideBar() {
     if (Number(key) !== Number(selectedBoardId))
       changeSelectedBoard(Number(key));
   };
+
   return (
     <Sidebar>
       <SidebarBody>

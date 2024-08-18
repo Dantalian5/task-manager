@@ -1,25 +1,34 @@
 'use client';
 import React from 'react';
 
-import { Button } from '@nextui-org/button';
-import { useDisclosure } from '@nextui-org/react';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { Divider } from '@nextui-org/divider';
-import { ScrollShadow } from '@nextui-org/scroll-shadow';
-import { Switch } from '@nextui-org/switch';
-import { useTheme } from 'next-themes';
-import { Spinner } from '@nextui-org/spinner';
 
-import UserBtn from '@/components/common/UserBtn';
-import AddBoard from '@/components/common/AddBoard';
-import { useBoards } from '@/context/BoardsProvider';
-import { svgAddBoard, svgPlus, svgBoard, svgMenu } from '@/utils/svgIcons';
-import { Span } from 'next/dist/trace';
-import { svgSun, svgMoon } from '@/utils/svgIcons';
+import UserForm from '@/components/forms/UserForm';
+
+import {
+  svgUser,
+  svgSecure,
+  svgSettings,
+  svgUserSettings,
+} from '@/utils/svgIcons';
 
 import { Sidebar, SidebarBody } from '@/components/common/Sidebar';
+import SecurityForm from '@/components/forms/SecurityForm';
+import SettingsForm from '@/components/forms/SettingsForm';
 
 export default function Settings() {
+  function scrollToId(key: React.Key) {
+    const targetId = key as string;
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
+  }
+
   return (
     <div className="flex flex-row items-stretch h-svh overflow-hidden relative">
       <Sidebar>
@@ -29,23 +38,47 @@ export default function Settings() {
             aria-label="Boards"
             isVertical
             fullWidth
-            variant="light"
+            variant="underlined"
             color="primary"
+            onSelectionChange={scrollToId}
             classNames={{
-              tabList: 'gap-4 w-full relative rounded-none pl-0 py-4 pr-4',
-              cursor: 'w-full rounded-l-none rounded-r-full',
-              tab: 'h-12 justify-start',
-              tabContent: 'w-full overflow-hidden font-semibold text-base',
+              tabList:
+                'gap-2 w-full relative rounded-none pl-0 py-4 pr-4 justify-start items-start',
+              cursor: 'w-full bg-success hidden',
+              tab: 'h-8 justify-start',
+              tabContent:
+                'overflow-hidden text-base group-data-[selected=true]:text-success',
             }}
           >
             <Tab
-              key={'user'}
-              id={'user'}
+              key={'userForm'}
               title={
                 <div className="flex items-center overflow-hidden text-base gap-2">
-                  <span className="text-base">{svgBoard}</span>
+                  <span className="text-base">{svgUser}</span>
                   <span className="overflow-hidden overflow-ellipsis">
                     User
+                  </span>
+                </div>
+              }
+            />
+            <Tab
+              key={'securityForm'}
+              title={
+                <div className="flex items-center overflow-hidden text-base gap-2">
+                  <span className="text-base">{svgSecure}</span>
+                  <span className="overflow-hidden overflow-ellipsis">
+                    Security
+                  </span>
+                </div>
+              }
+            />
+            <Tab
+              key={'settingsForm'}
+              title={
+                <div className="flex items-center overflow-hidden text-base gap-2">
+                  <span className="text-base">{svgSettings}</span>
+                  <span className="overflow-hidden overflow-ellipsis">
+                    Settings
                   </span>
                 </div>
               }
@@ -53,6 +86,22 @@ export default function Settings() {
           </Tabs>
         </SidebarBody>
       </Sidebar>
+      <main className="w-full flex flex-col items-stretch flex-grow overflow-scroll">
+        <div className="flex w-full items-center px-4 py-3 sm:py-4 border-b border-border/10 justify-between gap-4 relative z-20 backdrop-blur-sm shadow-bottom bg-gradient-to-b from-background/5 to-background-light/20">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap p-2 flex items-center gap-2">
+            {svgUserSettings} User Settings
+          </h2>
+        </div>
+        <div className=" flex items-start justify-center p-6 pb-10 overflow-x-scroll w-full h-full flex-grow relative z-10">
+          <div className="w-[80%] max-w-[600px] flex flex-col gap-6">
+            <UserForm />
+            <Divider />
+            <SecurityForm />
+            <Divider />
+            <SettingsForm />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

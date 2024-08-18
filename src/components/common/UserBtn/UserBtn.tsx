@@ -7,34 +7,63 @@ import {
   DropdownSection,
   DropdownItem,
 } from '@nextui-org/dropdown';
+import Link from 'next/link';
+
+import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
 export default function UserBtn() {
+  const user = {
+    name: 'Jhon Doe',
+    email: 'test@email.com',
+  };
   return (
-    <Dropdown placement="bottom-end">
+    <Dropdown
+      placement="bottom-end"
+      classNames={{
+        content: 'bg-card-gradient from-background to-background-light',
+      }}
+    >
       <DropdownTrigger>
         <Avatar
           isBordered
           as="button"
           className="transition-transform"
+          classNames={{
+            name: 'text-xl font-semibold uppercase',
+            base: 'bg-space-gradient from-background to-background-light',
+          }}
           color="primary"
-          name="J"
+          name={user.name[0]}
           size="md"
         />
       </DropdownTrigger>
-      <DropdownMenu aria-label="Profile Actions" variant="flat">
-        <DropdownItem key="profile" className="h-14 gap-2">
-          <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">zoey@example.com</p>
-        </DropdownItem>
-        <DropdownItem key="settings">My Settings</DropdownItem>
-        <DropdownItem key="team_settings">Team Settings</DropdownItem>
-        <DropdownItem key="analytics">Analytics</DropdownItem>
-        <DropdownItem key="system">System</DropdownItem>
-        <DropdownItem key="configurations">Configurations</DropdownItem>
-        <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-        <DropdownItem key="logout" color="danger">
-          Log Out
-        </DropdownItem>
+      <DropdownMenu aria-label="Profile Actions" variant="faded">
+        <DropdownSection aria-label="Profile" showDivider>
+          <DropdownItem
+            isReadOnly
+            key="profile"
+            className="h-14 gap-2"
+            textValue="Profile"
+          >
+            <p className="font-semibold">Signed in as</p>
+            <p className="font-semibold">{user.email}</p>
+          </DropdownItem>
+        </DropdownSection>
+        <DropdownSection aria-label="Actions">
+          <DropdownItem key="team_settings" endContent={svgDashboard} href="/">
+            Dashboard
+          </DropdownItem>
+          <DropdownItem
+            key="settings"
+            endContent={svgSettings}
+            href="/settings"
+          >
+            My Settings
+          </DropdownItem>
+          <DropdownItem key="logout" color="danger" endContent={svgLogout}>
+            Log Out
+          </DropdownItem>
+        </DropdownSection>
       </DropdownMenu>
     </Dropdown>
   );

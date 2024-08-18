@@ -9,7 +9,6 @@ import { useSelectedBoard } from '@/context/BoardsProvider';
 import TaskProvider from '@/context/TaskProvider';
 import TopBar from '@/components/layout/TopBar';
 import EmptyBoard from '@/components/common/EmptyBoard';
-import { svgAddBoard } from '@/utils/svgIcons';
 
 export default function Board() {
   const { board, isLoading } = useSelectedBoard();
