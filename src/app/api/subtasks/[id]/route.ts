@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismaDB';
+import { auth } from '@/auth';
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params?: { id?: string } }
-) {
+export const PUT = auth(async function PUT(req, { params }) {
   const id = params?.id as string;
   const data = await req.json();
+  const userId = req.auth?.user?.id;
 
   try {
+    if (!userId) throw new Error('User not found');
     const updatedTask = await prisma.subTask.update({
       where: { id: parseInt(id, 10) },
       data,
@@ -22,4 +22,4 @@ export async function PUT(
       { status: 500 }
     );
   }
-}
+});

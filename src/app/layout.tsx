@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { Providers } from './providers';
+import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,6 +24,7 @@ export default function RootLayout({
         className={`${jakarta.className} bg-space-gradient from-background to-background-light w-full h-full min-h-svh flex flex-col items-stretch justify-stretch`}
       >
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );

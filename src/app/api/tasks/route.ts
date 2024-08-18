@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismaDB';
+import { auth } from '@/auth';
 
-export async function POST(req: NextRequest) {
+export const POST = auth(async function POST(req) {
   const data = await req.json();
+  const userId = req.auth?.user?.id;
 
   try {
+    if (!userId) throw new Error('User not found');
     const newTask = await prisma.task.create({
       data: {
         title: data.title,
@@ -30,4 +33,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

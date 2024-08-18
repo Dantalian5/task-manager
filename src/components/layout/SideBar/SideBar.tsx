@@ -22,7 +22,7 @@ export default function SideBar() {
     if (Number(key) !== Number(selectedBoardId))
       changeSelectedBoard(Number(key));
   };
-
+  console.log(boards);
   return (
     <Sidebar>
       <SidebarBody>
@@ -46,7 +46,7 @@ export default function SideBar() {
               tabContent: 'w-full overflow-hidden font-semibold text-base',
             }}
           >
-            {boards.map((board) => (
+            {boards?.map((board) => (
               <Tab
                 key={board.id}
                 id={String(board.id)}

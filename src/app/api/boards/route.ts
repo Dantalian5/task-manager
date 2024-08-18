@@ -4,13 +4,13 @@ import { auth } from '@/auth';
 import prisma from '@/lib/prismaDB';
 
 export const GET = auth(async function GET(req) {
-  if (req.auth) {
-    return NextResponse.json(req.auth);
-  }
+  const userId = req.auth?.user?.id;
   try {
+    if (!userId) throw new Error('User not found');
+
     const boards = await prisma.board.findMany({
       where: {
-        userId: 1,
+        userId: Number(userId),
       },
       select: {
         id: true,
@@ -32,14 +32,17 @@ export const GET = auth(async function GET(req) {
     );
   }
 });
-export async function POST(req: NextRequest) {
+
+export const POST = auth(async function POST(req) {
   const data = await req.json();
+  const userId = req.auth?.user?.id;
 
   try {
+    if (!userId) throw new Error('User not found');
     const newBoard = await prisma.board.create({
       data: {
         title: data.title,
-        userId: 1,
+        userId: Number(userId),
         columns: {
           create: data.columns.map((column: { name: string }) => ({
             name: column.name,
@@ -56,4 +59,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
