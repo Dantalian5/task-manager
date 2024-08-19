@@ -8,6 +8,7 @@ import {
   DropdownItem,
 } from '@nextui-org/dropdown';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
@@ -60,7 +61,12 @@ export default function UserBtn() {
           >
             My Settings
           </DropdownItem>
-          <DropdownItem key="logout" color="danger" endContent={svgLogout}>
+          <DropdownItem
+            key="logout"
+            color="danger"
+            endContent={svgLogout}
+            onClick={() => signOut()}
+          >
             Log Out
           </DropdownItem>
         </DropdownSection>

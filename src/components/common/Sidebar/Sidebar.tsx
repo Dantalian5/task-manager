@@ -24,24 +24,8 @@ function SidebarActions({ children }: { children?: React.ReactNode }) {
     </div>
   );
 }
-function SidebarThemeSwitch() {
-  const { theme, setTheme } = useTheme();
-  return (
-    <div className="flex flex-col p-3 items-start justify-start mt-auto gap-2">
-      <Divider className="w-full" />
-      <Switch
-        size="md"
-        color="success"
-        startContent={svgSun}
-        endContent={svgMoon}
-        aria-label="Switch Color Theme"
-        isSelected={(theme === 'light' && true) || false}
-        onValueChange={(value) => setTheme(value ? 'light' : 'dark')}
-      />
-    </div>
-  );
-}
 function Sidebar({ children = null }: { children?: React.ReactNode }) {
+  const { theme, setTheme } = useTheme();
   return (
     <div className="hidden w-full sm:max-w-[260px] lg:max-w-[300px] sm:flex flex-col border-r border-border/10 relative z-2 ">
       <div className="flex w-full items-center p-5 border-b border-border/10 shadow-bottom justify-between bg-gradient-to-br from-background/10 to-background-light/20">
@@ -49,7 +33,18 @@ function Sidebar({ children = null }: { children?: React.ReactNode }) {
       </div>
       <div className="flex w-full flex-col overflow-hidden flex-grow bg-gradient-to-r from-background/5 to-background-light/20 backdrop-blur-sm shadow-right">
         {children}
-        <SidebarThemeSwitch />
+        <div className="flex flex-col p-3 items-start justify-start mt-auto gap-2">
+          <Divider className="w-full" />
+          <Switch
+            size="md"
+            color="success"
+            startContent={svgSun}
+            endContent={svgMoon}
+            aria-label="Switch Color Theme"
+            isSelected={(theme === 'light' && true) || false}
+            onValueChange={(value) => setTheme(value ? 'light' : 'dark')}
+          />
+        </div>
       </div>
     </div>
   );

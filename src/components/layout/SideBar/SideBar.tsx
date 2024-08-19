@@ -22,7 +22,6 @@ export default function SideBar() {
     if (Number(key) !== Number(selectedBoardId))
       changeSelectedBoard(Number(key));
   };
-  console.log(boards);
   return (
     <Sidebar>
       <SidebarBody>

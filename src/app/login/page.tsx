@@ -37,7 +37,6 @@ export default function Login() {
         email: data.email,
         password: data.password,
       });
-      console.log(res);
       if (await !res?.error) {
         toast.success('Successfully logged in');
         router.push('/');
