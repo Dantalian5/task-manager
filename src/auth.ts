@@ -24,8 +24,6 @@ export const {
       if (user) {
         token.id = user.id;
         token.name = user.name;
-        token.username = user.username;
-        token.image = user.image;
         token.email = user.email;
       }
       return token;
@@ -33,8 +31,6 @@ export const {
     session({ session, token }: any) {
       session.user.id = token.id;
       session.user.name = token.name;
-      session.user.username = token.username;
-      session.user.image = token.image;
       session.user.email = token.email;
       return session;
     },

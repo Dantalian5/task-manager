@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
 
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { Divider } from '@nextui-org/divider';
 
@@ -18,6 +20,14 @@ import SecurityForm from '@/components/forms/SecurityForm';
 import SettingsForm from '@/components/forms/SettingsForm';
 
 export default function Settings() {
+  const session = useSession();
+  const router = useRouter();
+
+  if (!session) {
+    router.push('/login');
+    return null;
+  }
+
   function scrollToId(key: React.Key) {
     const targetId = key as string;
     const targetElement = document.getElementById(targetId);

@@ -1,4 +1,6 @@
 'use client';
+
+import { useSession } from 'next-auth/react';
 import { Avatar } from '@nextui-org/avatar';
 import {
   Dropdown,
@@ -7,15 +9,15 @@ import {
   DropdownSection,
   DropdownItem,
 } from '@nextui-org/dropdown';
-import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 
 import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
 export default function UserBtn() {
+  const session = useSession();
   const user = {
-    name: 'Jhon Doe',
-    email: 'test@email.com',
+    name: session?.data?.user?.name || 'G',
+    email: session?.data?.user?.email || 'G',
   };
   return (
     <Dropdown
@@ -46,7 +48,8 @@ export default function UserBtn() {
             className="h-14 gap-2"
             textValue="Profile"
           >
-            <p className="font-semibold">Signed in as</p>
+            <p className="font-normal text-xs text-secondary">Signed in as</p>
+            <p className="font-semibold">{user.name}</p>
             <p className="font-semibold">{user.email}</p>
           </DropdownItem>
         </DropdownSection>

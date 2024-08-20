@@ -10,7 +10,10 @@ import {
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session?.user) redirect('/');
+  if (!session?.user) {
+    redirect('/');
+    return null;
+  }
 
   return (
     <div className="w-full flex flex-row items-stretch justify-start h-svh overflow-hidden relative">
