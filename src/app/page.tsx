@@ -1,4 +1,4 @@
-import { auth } from '../auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 
 import IntroPage from '@/components/common/IntroPage/IntroPage';
@@ -16,7 +16,7 @@ export default async function Home() {
             Stay focused and organized with a desk that works for you.
           </p>
         </div>
-        <div className="bg-card-gradient from-background to-background-light rounded-lg flex flex-col gap-6 p-6 sm:p-8 shadow-lg backdrop-blur-sm w-full">
+        <div className="bg-card-gradient from-background to-background-light rounded-lg flex flex-col gap-6 p-6 sm:p-8 shadow-lg backdrop-blur-sm w-full max-w-[460px]">
           <IntroPage />
         </div>
       </div>

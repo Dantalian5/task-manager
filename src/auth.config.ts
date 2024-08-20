@@ -17,7 +17,6 @@ export default {
       async authorize(credentials) {
         try {
           const { email, password } = loginUserSchema.parse(credentials);
-          console.log(credentials);
 
           const user = await prisma.user.findUnique({
             where: {
@@ -25,14 +24,10 @@ export default {
             },
           });
 
-          console.log(user);
-
           if (!user || !user.password || user.password === '')
             throw new Error('User not found');
 
-          //const passwordsMatch = await bcrypt.compare(password, user.password);
-          const passwordsMatch = password === user.password;
-          console.log(passwordsMatch);
+          const passwordsMatch = await bcrypt.compare(password, user.password);
 
           if (passwordsMatch)
             return {

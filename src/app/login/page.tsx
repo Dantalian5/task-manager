@@ -6,8 +6,9 @@ import { Button } from '@nextui-org/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { Link as LinkUI } from '@nextui-org/link';
 import { useRouter } from 'next/navigation';
-import { signIn, signOut } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { type LoginUserSchema, loginUserSchema } from '@/schemas/userSchema';
@@ -24,8 +25,8 @@ export default function Login() {
   } = useForm<LoginUserSchema>({
     resolver: zodResolver(loginUserSchema),
     defaultValues: {
-      email: 'testuser@example.com',
-      password: 'securepassword',
+      email: '',
+      password: '',
     },
   });
 
@@ -67,7 +68,7 @@ export default function Login() {
           radius="sm"
           isClearable
           color="secondary"
-          placeholder="e.g. Jhon Doe"
+          placeholder="e.g. your@email.com"
           classNames={{
             label: 'text-sm font-semibold text-secondary',
             inputWrapper: 'border hover:border-primary',
@@ -84,7 +85,7 @@ export default function Login() {
           radius="sm"
           isClearable
           color="secondary"
-          placeholder="e.g. your@email.com"
+          placeholder="*****"
           classNames={{
             label: 'text-sm font-semibold text-secondary',
             inputWrapper: 'border hover:border-primary',
@@ -92,12 +93,9 @@ export default function Login() {
           {...register('password')}
         />
         <div className="w-full flex items-center justify-between gap-4 mt-4">
-          <div className="flex items-center">
-            <span className="text-sm text-secondary">or</span>
-            <Button color="primary" variant="light">
-              Sign Up
-            </Button>
-          </div>
+          <LinkUI href="/" color="primary" className="text-sm">
+            Go Home
+          </LinkUI>
           <Button color="primary" type="submit">
             Log In
           </Button>
@@ -106,13 +104,12 @@ export default function Login() {
           <span className="text-sm text-secondary text-center block w-full">
             Don’t have an account? Please{' '}
             <Link className="text-primary" href={'/register'}>
-              sign up
+              Sign Up
             </Link>
             .
           </span>
         </div>
       </form>
-      <button onClick={() => signOut()}>signout</button>
     </div>
   );
 }

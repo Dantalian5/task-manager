@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@nextui-org/button';
 
-export default function () {
+export default function IntroPage() {
   const router = useRouter();
   const onTryDemo = async () => {
     try {
       const res = await signIn('credentials', {
         redirect: false,
-        email: 'testuser@example.com',
-        password: 'securepassword',
+        email: process.env.NEXT_PUBLIC_DEMO_USER,
+        password: process.env.NEXT_PUBLIC_DEMO_PASSWORD,
       });
       if (await !res?.error) {
         router.push('/dashboard');
@@ -36,9 +36,9 @@ export default function () {
       </p>
       <p className="text-base text-secondary">
         New here?{' '}
-        <a href="/signup" className="text-primary font-bold hover:underline">
+        <Link href="/signup" className="text-primary font-bold hover:underline">
           Sign up
-        </a>{' '}
+        </Link>{' '}
         and join us.
       </p>
       <p className="text-base text-secondary">
@@ -49,7 +49,13 @@ export default function () {
         to see what FocusDesk can do.
       </p>
       <div className="flex flex-col gap-4 mt-4">
-        <Button color="primary" fullWidth className="font-bold text-base ">
+        <Button
+          href="/register"
+          as={Link}
+          color="primary"
+          fullWidth
+          className="font-bold text-base "
+        >
           Create an Account
         </Button>
         <Button
