@@ -14,7 +14,7 @@ import {
   type RegisterUserSchema,
   registerUserSchema,
 } from '@/schemas/userSchema';
-import { addUserToDb } from '@/actions/db';
+import { addUserToDb } from '@/actions/userActions';
 
 export default function Register() {
   const [isSaving, setIsSaving] = React.useState(false);
@@ -37,7 +37,6 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<RegisterUserSchema> = async (data) => {
     setIsSaving(true);
-    console.log(data);
     try {
       const res = await addUserToDb(data);
       switch (res.status) {
@@ -54,7 +53,6 @@ export default function Register() {
           break;
         case 500:
           throw new Error('500 Internal Server Error');
-          break;
         default:
           throw new Error('500 Internal Server Error');
       }
@@ -63,8 +61,6 @@ export default function Register() {
     }
     setIsSaving(false);
   };
-  console.log(errors);
-  console.log(isSaving);
   return (
     <div className="w-full min-h-svh flex items-center justify-center">
       <form

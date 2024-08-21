@@ -27,6 +27,7 @@ export default function Settings() {
     router.push('/login');
     return null;
   }
+  const user = session?.data?.user as { name: string; email: string };
 
   function scrollToId(key: React.Key) {
     const targetId = key as string;
@@ -103,13 +104,15 @@ export default function Settings() {
           </h2>
         </div>
         <div className=" flex items-start justify-center p-6 pb-10 overflow-x-scroll w-full h-full flex-grow relative z-10">
-          <div className="w-[80%] max-w-[600px] flex flex-col gap-6">
-            <UserForm />
-            <Divider />
-            <SecurityForm />
-            <Divider />
-            <SettingsForm />
-          </div>
+          {user && (
+            <div className="w-[80%] max-w-[600px] flex flex-col gap-6">
+              <UserForm userData={user} />
+              <Divider />
+              <SecurityForm />
+              <Divider />
+              <SettingsForm />
+            </div>
+          )}
         </div>
       </main>
     </div>

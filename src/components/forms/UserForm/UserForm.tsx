@@ -1,38 +1,58 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import toast from 'react-hot-toast';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
-import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-type Inputs = {
-  name: string;
-  email: string;
-};
-export default function UserForm() {
-  const [isSaving, setIsSaving] = React.useState(false);
-  const userData = {
-    name: 'Test User',
-    email: 'test@email.com',
+import { updateUser } from '@/actions/userActions';
+import { updateUserData, type UpdateUserData } from '@/schemas/userSchema';
+
+type UserFormProps = {
+  userData?: {
+    name: string;
+    email: string;
   };
+};
+
+export default function UserForm({ userData }: UserFormProps) {
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<Inputs>({
+  } = useForm<UpdateUserData>({
+    resolver: zodResolver(updateUserData),
     defaultValues: {
-      name: userData.name,
-      email: userData.email,
+      name: userData?.name,
+      email: userData?.email,
     },
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<UpdateUserData> = async (data) => {
     setIsSaving(true);
     try {
-      console.log('Data:', data);
+      const res = await updateUser(data);
+      switch (res.status) {
+        case 201:
+          toast.success('User updated successfully');
+          break;
+        case 400:
+          toast.error('Please fill in all the fields correctly');
+          break;
+        case 409:
+          toast.error('User with that email already exists');
+          break;
+        case 500:
+          throw new Error('500 Internal Server Error');
+        default:
+          throw new Error('500 Internal Server Error');
+      }
     } catch (error) {
-      console.error('Error submiting task:', error);
+      toast.error('Oops, something went wrong. Try again later');
     }
     setIsSaving(false);
   };
@@ -83,11 +103,23 @@ export default function UserForm() {
         }}
         {...register('email')}
       />
+      <span className="text-xs text-secondary ">
+        Changes will be visible after you log out and sign back in.
+      </span>
       <div className="w-full flex items-center justify-end gap-4">
-        <Button color="default" type="button">
+        <Button
+          color="default"
+          type="button"
+          onClick={() =>
+            reset({
+              name: userData?.name,
+              email: userData?.email,
+            })
+          }
+        >
           Cancel
         </Button>
-        <Button color="primary" type="submit">
+        <Button color="primary" type="submit" isDisabled={isSaving}>
           Update
         </Button>
       </div>

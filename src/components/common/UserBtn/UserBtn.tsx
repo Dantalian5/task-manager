@@ -32,7 +32,7 @@ export default function UserBtn() {
           as="button"
           className="transition-transform"
           classNames={{
-            name: 'text-xl font-semibold uppercase',
+            name: 'text-xl font-semibold uppercase text-foreground',
             base: 'bg-space-gradient from-background to-background-light',
           }}
           color="primary"

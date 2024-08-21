@@ -4,6 +4,11 @@ import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Select, SelectSection, SelectItem } from '@nextui-org/select';
+import toast from 'react-hot-toast';
+import { useDisclosure } from '@nextui-org/react';
+
+import { deleteUser } from '@/actions/userActions';
+import ConfirmModal from '@/components/common/ConfirmModal';
 
 import { svgDelete } from '@/utils/svgIcons';
 
@@ -11,6 +16,7 @@ type Inputs = {};
 
 export default function SettingsForm() {
   const [isSaving, setIsSaving] = React.useState(false);
+  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
   const orderOptions = [
     { key: 'alphaAsc', value: 'Alphabetical (A-Z)' },
     { key: 'alphaDesc', value: 'Alphabetical (Z-A)' },
@@ -39,6 +45,23 @@ export default function SettingsForm() {
       console.log('Data:', data);
     } catch (error) {
       console.error('Error submiting task:', error);
+    }
+    setIsSaving(false);
+  };
+
+  const handleDeleteUser = async () => {
+    setIsSaving(true);
+    try {
+      const res = await deleteUser();
+      if (res?.status === 200) {
+        toast.success('User deleted successfully');
+      } else if (res?.status === 401) {
+        toast.error('Unauthorized Action');
+      } else {
+        toast.error('Oops, something went wrong. Try again later');
+      }
+    } catch (error) {
+      toast.error('Oops, something went wrong. Try again later');
     }
     setIsSaving(false);
   };
@@ -124,10 +147,24 @@ export default function SettingsForm() {
       </div>
       <div className="w-full flex flex-wrap items-center justify-between border-secondary border-y py-2 mt-8">
         <p className="text-warning text-base">Delete User</p>
-        <Button color="danger" type="button" startContent={svgDelete}>
+        <Button
+          color="danger"
+          type="button"
+          startContent={svgDelete}
+          isDisabled={isSaving}
+          onClick={onOpen}
+        >
           Delete
         </Button>
       </div>
+      <ConfirmModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+        onConfirm={handleDeleteUser}
+        title="Delete User"
+        message="Are you sure you want to delete your account? This action cannot be undone."
+      />
     </form>
   );
 }

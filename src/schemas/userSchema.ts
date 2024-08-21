@@ -36,6 +36,12 @@ export const loginUserSchema = z.object({
 });
 export type LoginUserSchema = z.infer<typeof loginUserSchema>;
 
+export const updateUserData = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().min(1, 'Email is required').email('Invalid email'),
+});
+export type UpdateUserData = z.infer<typeof updateUserData>;
+
 export const updateUserPass = z
   .object({
     oldPassword: z.string().min(1, 'Old password is required'),
@@ -47,7 +53,7 @@ export const updateUserPass = z
     confirmNewPassword: z.string().min(1, 'Please confirm your password'),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    path: ['confirmPassword'],
+    path: ['confirmNewPassword'],
     message: 'Passwords do not match',
   });
 export type UpdateUserPass = z.infer<typeof updateUserPass>;

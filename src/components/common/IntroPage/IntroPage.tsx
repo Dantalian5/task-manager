@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 import { Button } from '@nextui-org/button';
 
@@ -16,6 +17,7 @@ export default function IntroPage() {
         password: process.env.NEXT_PUBLIC_DEMO_PASSWORD,
       });
       if (await !res?.error) {
+        toast.success('Successfully logged in as demo user');
         router.push('/dashboard');
       } else {
         throw new Error('Error entering demo mode');
