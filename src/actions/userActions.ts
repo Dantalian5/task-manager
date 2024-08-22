@@ -12,6 +12,7 @@ import {
   updateUserPass,
   type UpdateUserPass,
 } from '@/schemas/userSchema';
+import { Settings } from '@/types/global';
 
 export async function addUserToDb(user: RegisterUserSchema) {
   try {
@@ -19,9 +20,16 @@ export async function addUserToDb(user: RegisterUserSchema) {
     const hashedPassword = await hash(password, 12);
     const newUser = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: name,
+        email: email,
         password: hashedPassword,
+        settings: {
+          create: {
+            boardSortBy: 'dateNewest',
+            columnSortBy: 'dateNewest',
+            taskSortBy: 'dateNewest',
+          },
+        },
       },
     });
     return { status: 201, user: newUser };
@@ -96,6 +104,42 @@ export async function deleteUser() {
       where: { id: Number(user?.id) },
     });
     return { status: 200, message: 'User Deleted' };
+  } catch (error: any) {
+    return { status: 500, message: 'Internal Server Error' };
+  }
+}
+export async function getUserSettings() {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user?.id) return { status: 404, message: 'User not found' };
+    const settings = await prisma.setting.findUnique({
+      where: { userId: Number(user.id) },
+      select: {
+        boardSortBy: true,
+        columnSortBy: true,
+        taskSortBy: true,
+      },
+    });
+    return { status: 200, settings: settings };
+  } catch (error: any) {
+    return { status: 500, message: 'Internal Server Error' };
+  }
+}
+export async function putUserSettings(data: Settings) {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user?.id) return { status: 404, message: 'User not found' };
+    const settings = await prisma.setting.update({
+      where: { userId: Number(user.id) },
+      data: {
+        boardSortBy: data.boardSortBy,
+        columnSortBy: data.columnSortBy,
+        taskSortBy: data.taskSortBy,
+      },
+    });
+    return { status: 200, settings: settings };
   } catch (error: any) {
     return { status: 500, message: 'Internal Server Error' };
   }

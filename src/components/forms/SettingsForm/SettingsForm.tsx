@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Select, SelectSection, SelectItem } from '@nextui-org/select';
+import { Select, SelectItem } from '@nextui-org/select';
 import toast from 'react-hot-toast';
-import { useDisclosure } from '@nextui-org/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { deleteUser } from '@/actions/userActions';
-import ConfirmModal from '@/components/common/ConfirmModal';
+import {
+  type UpdateUserSettings,
+  updateUserSettings,
+} from '@/schemas/userSchema';
+import {
+  deleteUser,
+  getUserSettings,
+  putUserSettings,
+} from '@/actions/userActions';
+import BtnConfirm from '@/components/common/BtnConfirm';
 
 import { svgDelete } from '@/utils/svgIcons';
+import type { SortOrder } from '@/types/global';
 
-type Inputs = {};
-
-export default function SettingsForm() {
+export default function SettingsForm({ userId }: { userId: number }) {
   const [isSaving, setIsSaving] = React.useState(false);
-  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
   const orderOptions = [
     { key: 'alphaAsc', value: 'Alphabetical (A-Z)' },
     { key: 'alphaDesc', value: 'Alphabetical (Z-A)' },
@@ -25,33 +31,70 @@ export default function SettingsForm() {
     { key: 'updatedNewest', value: 'Last Updated (Newest First)' },
     { key: 'updatedOldest', value: 'Last Updated (Oldest First)' },
   ];
-  const userData = {
-    name: 'Test User',
-    email: 'test@email.com',
-  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<Inputs>({
-    defaultValues: {},
+  } = useForm<UpdateUserSettings>({
+    resolver: zodResolver(updateUserSettings),
+    defaultValues: {
+      boardSortBy: 'dateNewest' as SortOrder,
+      columnSortBy: 'dateNewest' as SortOrder,
+      taskSortBy: 'dateNewest' as SortOrder,
+    },
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setIsSaving(true);
-    try {
-      console.log('Data:', data);
-    } catch (error) {
-      console.error('Error submiting task:', error);
+  useEffect(() => {
+    async function loadSettings() {
+      setIsSaving(true);
+      try {
+        const { status, settings } = await getUserSettings();
+        if (status === 200 && settings) {
+          reset({
+            boardSortBy: settings.boardSortBy as SortOrder,
+            columnSortBy: settings.columnSortBy as SortOrder,
+            taskSortBy: settings.taskSortBy as SortOrder,
+          });
+          console.log(settings);
+        }
+      } catch (error) {
+        toast.error('Failed to load settings');
+      } finally {
+        setIsSaving(false);
+      }
     }
-    setIsSaving(false);
+    loadSettings();
+  }, []);
+
+  const onSubmit: SubmitHandler<UpdateUserSettings> = async (data) => {
+    try {
+      setIsSaving(true);
+      const res = await putUserSettings(data);
+      if (res?.status === 200) {
+        toast.success('User deleted successfully');
+        if (res.settings)
+          reset({
+            boardSortBy: res.settings.boardSortBy as SortOrder,
+            columnSortBy: res.settings.columnSortBy as SortOrder,
+            taskSortBy: res.settings.taskSortBy as SortOrder,
+          });
+      } else if (res?.status === 401) {
+        toast.error('Unauthorized Action');
+      } else {
+        toast.error('Oops, something went wrong. Try again later');
+      }
+    } catch (error) {
+      toast.error('Oops, something went wrong. Try again later');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteUser = async () => {
-    setIsSaving(true);
     try {
+      setIsSaving(true);
       const res = await deleteUser();
       if (res?.status === 200) {
         toast.success('User deleted successfully');
@@ -62,8 +105,9 @@ export default function SettingsForm() {
       }
     } catch (error) {
       toast.error('Oops, something went wrong. Try again later');
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   return (
@@ -84,11 +128,14 @@ export default function SettingsForm() {
           label="Sort Boards by:"
           variant="bordered"
           labelPlacement="outside"
-          defaultSelectedKeys={['alphaAsc']}
+          selectionMode="single"
           classNames={{
             popoverContent:
               'bg-card-gradient from-background to-background-light',
           }}
+          isInvalid={!!errors.boardSortBy?.message}
+          errorMessage={errors.boardSortBy?.message}
+          {...register('boardSortBy')}
         >
           {orderOptions.map((item) => (
             <SelectItem key={item.key}>{item.value}</SelectItem>
@@ -101,11 +148,14 @@ export default function SettingsForm() {
           label="Sort Columns by:"
           variant="bordered"
           labelPlacement="outside"
-          defaultSelectedKeys={['alphaAsc']}
+          selectionMode="single"
           classNames={{
             popoverContent:
               'bg-card-gradient from-background to-background-light',
           }}
+          isInvalid={!!errors.columnSortBy?.message}
+          errorMessage={errors.columnSortBy?.message}
+          {...register('columnSortBy')}
         >
           {orderOptions.map((item) => (
             <SelectItem key={item.key}>{item.value}</SelectItem>
@@ -118,11 +168,14 @@ export default function SettingsForm() {
           label="Sort Tasks by:"
           variant="bordered"
           labelPlacement="outside"
-          defaultSelectedKeys={['alphaAsc']}
+          selectionMode="single"
           classNames={{
             popoverContent:
               'bg-card-gradient from-background to-background-light',
           }}
+          isInvalid={!!errors.taskSortBy?.message}
+          errorMessage={errors.taskSortBy?.message}
+          {...register('taskSortBy')}
         >
           {orderOptions.map((item) => (
             <SelectItem key={item.key}>{item.value}</SelectItem>
@@ -130,14 +183,16 @@ export default function SettingsForm() {
         </Select>
       </div>
       <div className="flex w-full gap-4 items-center justify-end">
-        <Button
+        <BtnConfirm
           color="danger"
           type="button"
           startContent={svgDelete}
           className="mr-auto"
-        >
-          Clear Dashboard
-        </Button>
+          title="Clear Dashboard"
+          message="Are you sure you want to delete All your boards, columns and tasks? This action cannot be undone."
+          label="Clear Dashboard"
+          onConfirm={() => console.log('Clear Dashboard')}
+        />
         <Button color="secondary" type="submit">
           Cancel
         </Button>
@@ -145,26 +200,19 @@ export default function SettingsForm() {
           Update
         </Button>
       </div>
-      <div className="w-full flex flex-wrap items-center justify-between border-secondary border-y py-2 mt-8">
+      <div className="w-full flex flex-wrap items-center justify-between border-secondary border-y py-2 mt-10">
         <p className="text-warning text-base">Delete User</p>
-        <Button
+        <BtnConfirm
+          onConfirm={handleDeleteUser}
           color="danger"
           type="button"
           startContent={svgDelete}
           isDisabled={isSaving}
-          onClick={onOpen}
-        >
-          Delete
-        </Button>
+          title="Delete User"
+          message="Are you sure you want to delete your account? This action cannot be undone."
+          label="Delete"
+        />
       </div>
-      <ConfirmModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        onClose={onClose}
-        onConfirm={handleDeleteUser}
-        title="Delete User"
-        message="Are you sure you want to delete your account? This action cannot be undone."
-      />
     </form>
   );
 }

@@ -53,10 +53,10 @@ export default function ConfirmModal({
               <p className="text-secondary">{message}</p>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="primary" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleAccept}>
+              <Button color="danger" onPress={handleAccept}>
                 Accept
               </Button>
             </ModalFooter>

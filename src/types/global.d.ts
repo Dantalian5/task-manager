@@ -55,4 +55,20 @@ export interface Board {
   id: number;
   title: string;
   columns: Column[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+export enum SortOrder {
+  AlphaAsc = 'alphaAsc',
+  AlphaDesc = 'alphaDesc',
+  DateNewest = 'dateNewest',
+  DateOldest = 'dateOldest',
+  UpdatedNewest = 'updatedNewest',
+  UpdatedOldest = 'updatedOldest',
+}
+
+export interface Settings {
+  boardSortBy: SortOrder;
+  columnSortBy: SortOrder;
+  taskSortBy: SortOrder;
 }

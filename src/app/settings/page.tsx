@@ -27,7 +27,11 @@ export default function Settings() {
     router.push('/login');
     return null;
   }
-  const user = session?.data?.user as { name: string; email: string };
+  const user = session?.data?.user as {
+    id: string;
+    name: string;
+    email: string;
+  };
 
   function scrollToId(key: React.Key) {
     const targetId = key as string;
@@ -110,7 +114,7 @@ export default function Settings() {
               <Divider />
               <SecurityForm />
               <Divider />
-              <SettingsForm />
+              <SettingsForm userId={Number(user.id)} />
             </div>
           )}
         </div>

@@ -11,6 +11,23 @@ model User {
   email    String @unique(map: "unique_email") @db.VarChar(255)
   password String @db.VarChar(255)
   boards    Board[]
+  settings  Setting?
+}
+enum SortOrder {
+  alphaAsc
+  alphaDesc
+  dateNewest
+  dateOldest
+  updatedNewest
+  updatedOldest
+}
+model Setting {
+  id       Int    @id @default(autoincrement())
+  userId   Int  @unique 
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boardSortBy  SortOrder @default(dateNewest)
+  columnSortBy SortOrder @default(dateNewest)
+  taskSortBy   SortOrder @default(dateNewest)
 }
 model Board {
   id          Int       @id @default(autoincrement())

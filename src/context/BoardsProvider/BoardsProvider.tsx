@@ -4,7 +4,8 @@ import useSWR, { mutate } from 'swr';
 import { Divider } from '@nextui-org/divider';
 import { Button } from '@nextui-org/button';
 
-import type { Board, Column } from '@/types/global';
+import type { Board, Column, Settings } from '@/types/global';
+import { SortOrder } from '@/schemas/userSchema';
 
 interface BoardsContextProps {
   boards: Omit<Board, 'columns'>[];
@@ -39,7 +40,13 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
+export const BoardsProvider = ({
+  children,
+  sortBoardsBy,
+}: {
+  children: React.ReactNode;
+  sortBoardsBy: Settings['boardSortBy'];
+}) => {
   const { data: boards, error, isLoading } = useSWR(`/api/boards`, fetcher);
   const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
 
@@ -55,6 +62,33 @@ export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
       setSelectedBoardId(boards[0].id);
     }
   }, [boards, selectedBoardId]);
+
+  const sortFn = (a: Board, b: Board): number => {
+    switch (sortBoardsBy) {
+      case SortOrder.AlphaAsc:
+        return a.title.localeCompare(b.title);
+      case SortOrder.AlphaDesc: // Orden alfabético Z-A
+        return b.title.localeCompare(a.title);
+      case SortOrder.DateNewest:
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case SortOrder.DateOldest:
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case SortOrder.UpdatedNewest:
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      case SortOrder.UpdatedOldest:
+        return (
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
+      default:
+        return 0;
+    }
+  };
 
   if (error) {
     return (
@@ -80,6 +114,7 @@ export const BoardsProvider = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
+  boards?.sort(sortFn);
   return (
     <BoardsContext.Provider
       value={{

@@ -57,3 +57,19 @@ export const updateUserPass = z
     message: 'Passwords do not match',
   });
 export type UpdateUserPass = z.infer<typeof updateUserPass>;
+
+export enum SortOrder {
+  AlphaAsc = 'alphaAsc',
+  AlphaDesc = 'alphaDesc',
+  DateNewest = 'dateNewest',
+  DateOldest = 'dateOldest',
+  UpdatedNewest = 'updatedNewest',
+  UpdatedOldest = 'updatedOldest',
+}
+const SortOrderEnum = z.nativeEnum(SortOrder);
+export const updateUserSettings = z.object({
+  boardSortBy: SortOrderEnum,
+  columnSortBy: SortOrderEnum,
+  taskSortBy: SortOrderEnum,
+});
+export type UpdateUserSettings = z.infer<typeof updateUserSettings>;
