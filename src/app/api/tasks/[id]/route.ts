@@ -1,29 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+import { auth } from '@/auth';
 import prisma from '@/lib/prismaDB';
+import { taskSchema } from '@/schemas/taskSchema';
 
-interface SubTask {
-  id: number | null;
-  title: string;
-}
+export const PUT = auth(async function PUT(req, { params }) {
+  const id = parseInt(params?.id as string, 10);
+  const userId = req.auth?.user?.id;
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params?: { id?: string } }
-) {
-  const id = params?.id as string;
-  const data = await req.json();
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Usuario no autenticado' },
+      { status: 401 }
+    );
+  }
 
-  console.log('data:', data);
+  const parsedData = taskSchema.safeParse(await req.json());
+  if (!parsedData.success) {
+    return NextResponse.json(
+      { error: 'Datos inválidos', issues: parsedData.error.format() },
+      { status: 400 }
+    );
+  }
+  const { title, description, columnId, subTasks } = parsedData.data;
 
   try {
-    if (data.subTasks) {
-      const existingSubTasks = await prisma.subTask.findMany({
-        where: { taskId: parseInt(id, 10) },
-      });
+    const task = await prisma.task.findFirst({
+      where: {
+        id: id,
+        userId: Number(userId),
+      },
+      include: {
+        subTasks: true,
+      },
+    });
 
-      const subTaskIds = data.subTasks
-        .map((subTask: SubTask) => subTask.id)
-        .filter((id: number) => id !== null);
+    if (!task) {
+      return NextResponse.json(
+        { error: 'Tarea no encontrada o no tienes permisos' },
+        { status: 404 }
+      );
+    }
+
+    if (subTasks) {
+      const existingSubTasks = task.subTasks;
+      const subTaskIds = subTasks
+        .map((subTask) => subTask.id)
+        .filter((id): id is number => !!id);
 
       const subTasksToDelete = existingSubTasks.filter(
         (subTask) => !subTaskIds.includes(subTask.id)
@@ -35,17 +58,18 @@ export async function PUT(
     }
 
     const updatedTask = await prisma.task.update({
-      where: { id: parseInt(id, 10) },
+      where: { id: id },
       data: {
-        title: data.title,
-        description: data.description,
-        columnId: Number(data.columnId),
+        title,
+        description,
+        columnId,
         subTasks: {
-          upsert: data.subTasks?.map((subTask: SubTask) => ({
-            where: { id: subTask.id || 0 },
-            update: { title: subTask.title },
-            create: { title: subTask.title },
-          })),
+          upsert:
+            subTasks?.map((subTask) => ({
+              where: { id: subTask.id || 0 },
+              update: { title: subTask.title },
+              create: { title: subTask.title, userId: Number(userId) }, // Asociar subtask al usuario
+            })) || [],
         },
       },
       include: { subTasks: true },
@@ -53,33 +77,44 @@ export async function PUT(
 
     return NextResponse.json(updatedTask);
   } catch (error) {
-    console.error('Error updating task:', error);
+    console.error('Error al actualizar la tarea:', error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }
-}
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params?: { id?: string } }
-) {
+});
+
+export const DELETE = auth(async function DELETE(req, { params }) {
   const id = parseInt(params?.id as string, 10);
+  const userId = req.auth?.user?.id;
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Usuario no autenticado' },
+      { status: 401 }
+    );
+  }
 
   try {
-    await prisma.task.delete({
-      where: { id: id },
+    const task = await prisma.task.delete({
+      where: { id: id, userId: Number(userId) },
     });
-
+    if (!task) {
+      return NextResponse.json(
+        { error: 'Tarea no encontrada' },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
-      { message: 'Task deleted successfully' },
+      { message: 'Tarea eliminada exitosamente' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting task:', error);
+    console.error('Error al eliminar la tarea:', error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }
-}
+});

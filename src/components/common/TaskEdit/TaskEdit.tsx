@@ -17,12 +17,30 @@ import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Spinner } from '@nextui-org/spinner';
 
-import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
+// import { type TaskSchema, taskSchema } from '@/schemas/taskSchema';
 import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
 import { useTask } from '@/context/TaskProvider';
 import type { Task } from '@/types/global';
 
 import { svgClose } from '@/utils/svgIcons';
+
+import { z } from 'zod';
+
+export const subTaskSchema = z.object({
+  id: z.number().int().positive().nullable(),
+  title: z.string().min(1),
+  isCompleted: z.boolean().optional(),
+});
+
+export const taskSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string(),
+  columnId: z.string().min(1, 'Status is required'),
+  subTasks: z.array(subTaskSchema).default([]),
+});
+
+export type SubTaskSchema = z.infer<typeof subTaskSchema>;
+export type TaskSchema = z.infer<typeof taskSchema>;
 
 interface EditTaskProps {
   isOpen: boolean;

@@ -67,7 +67,7 @@ export const BoardsProvider = ({
     switch (sortBoardsBy) {
       case SortOrder.AlphaAsc:
         return a.title.localeCompare(b.title);
-      case SortOrder.AlphaDesc: // Orden alfabético Z-A
+      case SortOrder.AlphaDesc:
         return b.title.localeCompare(a.title);
       case SortOrder.DateNewest:
         return (
@@ -138,19 +138,16 @@ export const SelectedBoardProvider = ({
   children: React.ReactNode;
 }) => {
   const { selectedBoardId: id } = useBoards();
-  const {
-    data: board,
-    error,
-    isLoading,
-  } = useSWR(id ? `/api/boards/${id}` : null, fetcher);
+  const dbUrl = `/api/boards/${id}?include=tasks`;
+  const { data: board, error, isLoading } = useSWR(id ? dbUrl : null, fetcher);
   const columns = board?.columns.map((column: Column) => ({
     id: column.id,
     name: column.name,
   }));
   const reload = async () => {
-    await mutate(`/api/boards/${id}`);
+    await mutate(dbUrl);
   };
-
+  console.log;
   return (
     <SelectedBoardContext.Provider
       value={{ board, columns, error, isLoading, reload }}

@@ -1,25 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import prisma from '@/lib/prismaDB';
 import { auth } from '@/auth';
+import { taskSchema } from '@/schemas/taskSchema';
 
 export const POST = auth(async function POST(req) {
-  const data = await req.json();
   const userId = req.auth?.user?.id;
 
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Usuario no autenticado' },
+      { status: 401 }
+    );
+  }
+
+  const parsedData = taskSchema.safeParse(await req.json());
+  if (!parsedData.success) {
+    return NextResponse.json(
+      { error: 'Datos inválidos', issues: parsedData.error.format() },
+      { status: 400 }
+    );
+  }
+  const { title, description, columnId, subTasks } = parsedData.data;
+
   try {
-    if (!userId) throw new Error('User not found');
     const newTask = await prisma.task.create({
       data: {
-        title: data.title,
-        description: data.description,
-        columnId: data.columnId,
+        title: title,
+        description: description,
+        columnId: columnId,
+        userId: Number(userId),
         subTasks: {
-          create: data.subTasks.map(
-            (subTask: { title: string; isCompleted: boolean }) => ({
+          create:
+            subTasks?.map((subTask) => ({
               title: subTask.title,
-              isCompleted: subTask.isCompleted,
-            })
-          ),
+              isCompleted: subTask.isCompleted || false,
+              userId: Number(userId),
+            })) || [],
         },
       },
       include: { subTasks: true },
