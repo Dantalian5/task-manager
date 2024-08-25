@@ -10,7 +10,7 @@ export const PUT = auth(async function PUT(req, { params }) {
 
   if (!userId) {
     return NextResponse.json(
-      { error: 'Usuario no autenticado' },
+      { error: 'User not authenticated' },
       { status: 401 }
     );
   }
@@ -18,7 +18,7 @@ export const PUT = auth(async function PUT(req, { params }) {
   const parsedData = taskSchema.safeParse(await req.json());
   if (!parsedData.success) {
     return NextResponse.json(
-      { error: 'Datos inválidos', issues: parsedData.error.format() },
+      { error: 'Invalid data', issues: parsedData.error.format() },
       { status: 400 }
     );
   }
@@ -37,7 +37,7 @@ export const PUT = auth(async function PUT(req, { params }) {
 
     if (!task) {
       return NextResponse.json(
-        { error: 'Tarea no encontrada o no tienes permisos' },
+        { error: 'Task not found or you do not have permission' },
         { status: 404 }
       );
     }
@@ -68,7 +68,7 @@ export const PUT = auth(async function PUT(req, { params }) {
             subTasks?.map((subTask) => ({
               where: { id: subTask.id || 0 },
               update: { title: subTask.title },
-              create: { title: subTask.title, userId: Number(userId) }, // Asociar subtask al usuario
+              create: { title: subTask.title, userId: Number(userId) }, // Associate subtask with the user
             })) || [],
         },
       },
@@ -77,9 +77,9 @@ export const PUT = auth(async function PUT(req, { params }) {
 
     return NextResponse.json(updatedTask);
   } catch (error) {
-    console.error('Error al actualizar la tarea:', error);
+    console.error('Error updating the task:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -91,7 +91,7 @@ export const DELETE = auth(async function DELETE(req, { params }) {
 
   if (!userId) {
     return NextResponse.json(
-      { error: 'Usuario no autenticado' },
+      { error: 'User not authenticated' },
       { status: 401 }
     );
   }
@@ -101,19 +101,16 @@ export const DELETE = auth(async function DELETE(req, { params }) {
       where: { id: id, userId: Number(userId) },
     });
     if (!task) {
-      return NextResponse.json(
-        { error: 'Tarea no encontrada' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
     return NextResponse.json(
-      { message: 'Tarea eliminada exitosamente' },
+      { message: 'Task successfully deleted' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error al eliminar la tarea:', error);
+    console.error('Error deleting the task:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -86,3 +86,33 @@ export const GET = auth(async function GET(req) {
     );
   }
 });
+
+export const DELETE = auth(async function DELETE(req) {
+  const userId = req.auth?.user?.id;
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Usuario no autenticado' },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const boards = await prisma.board.deleteMany({
+      where: {
+        userId: Number(userId),
+      },
+    });
+
+    return NextResponse.json(
+      { message: 'Boards successfully deleted' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error fetching boards:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+});

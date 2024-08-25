@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Select, SelectItem } from '@nextui-org/select';
@@ -85,6 +84,24 @@ export default function SettingsForm({ userId }: { userId: number }) {
       } else {
         toast.error('Oops, something went wrong. Try again later');
       }
+    } catch (error) {
+      toast.error('Oops, something went wrong. Try again later');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleClearBoards = async () => {
+    try {
+      const response = await fetch(`/api/boards`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+      response.status === 200 &&
+        toast.success('All boards, columns and tasks deleted successfully');
     } catch (error) {
       toast.error('Oops, something went wrong. Try again later');
     } finally {
@@ -191,9 +208,9 @@ export default function SettingsForm({ userId }: { userId: number }) {
           title="Clear Dashboard"
           message="Are you sure you want to delete All your boards, columns and tasks? This action cannot be undone."
           label="Clear Dashboard"
-          onConfirm={() => console.log('Clear Dashboard')}
+          onConfirm={handleClearBoards}
         />
-        <Button color="secondary" type="submit">
+        <Button color="secondary" type="button" onPress={() => reset()}>
           Cancel
         </Button>
         <Button color="primary" type="submit">

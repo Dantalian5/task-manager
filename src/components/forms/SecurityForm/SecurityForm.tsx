@@ -93,7 +93,7 @@ export default function SecurityForm() {
         radius="sm"
         isClearable
         color="secondary"
-        placeholder="****"
+        placeholder="*****"
         classNames={{
           label: 'text-sm font-semibold text-secondary',
           inputWrapper: 'border hover:border-primary',
