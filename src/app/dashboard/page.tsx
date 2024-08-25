@@ -1,20 +1,28 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+
+import {
+  Sidebar,
+  SidebarBody,
+  SidebarActions,
+} from '@/components/layout/SideBar';
+import TopBar from '@/components/layout/TopBar';
 import Board from '@/components/layout/Board';
-import SideBar from '@/components/layout/SideBar';
+import TopInfo from '@/components/common/TopInfo';
+import BoardsTabs from '@/components/common/BoardsTabs';
+import AddBoardBtn from '@/components/common/AddBoardBtn';
 import { getUserSettings } from '@/actions/userActions';
 
 import {
   BoardsProvider,
   SelectedBoardProvider,
 } from '@/context/BoardsProvider';
-import type { Settings, SortOrder } from '@/types/global';
+import type { SortOrder } from '@/types/global';
 
 export default async function Dashboard() {
   const session = await auth();
   if (!session?.user) {
     redirect('/');
-    return null;
   }
 
   const res = await getUserSettings();
@@ -34,8 +42,20 @@ export default async function Dashboard() {
         sortBoardsBy={(settings?.boardSortBy || 'dateNewest') as SortOrder}
       >
         <SelectedBoardProvider>
-          <SideBar />
-          <Board />
+          <Sidebar>
+            <SidebarBody>
+              <BoardsTabs />
+            </SidebarBody>
+            <SidebarActions>
+              <AddBoardBtn />
+            </SidebarActions>
+          </Sidebar>
+          <main className="w-full flex flex-col items-stretch flex-grow overflow-scroll">
+            <TopBar>
+              <TopInfo />
+            </TopBar>
+            <Board />
+          </main>
         </SelectedBoardProvider>
       </BoardsProvider>
     </div>

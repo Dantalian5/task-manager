@@ -1,80 +1,42 @@
-'use client';
+import React from 'react';
 
-import { useDisclosure } from '@nextui-org/react';
-import { Tabs, Tab } from '@nextui-org/tabs';
-import { Spinner } from '@nextui-org/spinner';
+import { Divider } from '@nextui-org/divider';
+import { ScrollShadow } from '@nextui-org/scroll-shadow';
 
-import AddBoard from '@/components/common/AddBoard';
-import { useBoards } from '@/context/BoardsProvider';
-import { svgAddBoard, svgBoard } from '@/utils/svgIcons';
+import UserBtn from '@/components/common/UserBtn';
+import ThemeSwitch from '@/components/common/ThemeSwitch';
 
-import {
-  Sidebar,
-  SidebarBody,
-  SidebarActions,
-} from '@/components/common/Sidebar';
-
-export default function SideBar() {
-  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
-  const { boards, selectedBoardId, changeSelectedBoard, isLoading } =
-    useBoards();
-  const handleSelectionChange = (key: React.Key) => {
-    if (Number(key) !== Number(selectedBoardId))
-      changeSelectedBoard(Number(key));
-  };
+function SidebarBody({ children }: { children?: React.ReactNode }) {
   return (
-    <Sidebar>
-      <SidebarBody>
-        {isLoading ? (
-          <div className="w-full p-4 flex items-center justify-center">
-            <Spinner />
-          </div>
-        ) : (
-          <Tabs
-            selectedKey={selectedBoardId?.toString()}
-            aria-label="Boards"
-            isVertical
-            onSelectionChange={handleSelectionChange}
-            fullWidth
-            variant="light"
-            color="primary"
-            classNames={{
-              tabList: 'gap-4 w-full relative rounded-none pl-0 py-4 pr-4',
-              cursor: 'w-full rounded-l-none rounded-r-full',
-              tab: 'h-12 justify-start',
-              tabContent: 'w-full overflow-hidden font-semibold text-base',
-            }}
-          >
-            {boards?.map((board) => (
-              <Tab
-                key={board.id}
-                id={String(board.id)}
-                title={
-                  <div className="flex items-center overflow-hidden text-base gap-2">
-                    <span className="text-base">{svgBoard}</span>
-                    <span className="overflow-hidden overflow-ellipsis">
-                      {board.title}
-                    </span>
-                  </div>
-                }
-              />
-            ))}
-          </Tabs>
-        )}
-      </SidebarBody>
-      <SidebarActions>
-        <button
-          className="w-full flex items-center justify-start p-3 gap-2 text-base font-semibold text-primary"
-          onClick={() => onOpen()}
-        >
-          {svgAddBoard} + Create New Board
-        </button>
-        <AddBoard
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          onClose={onClose}
-        />
-      </SidebarActions>
-    </Sidebar>
+    <div className="overflow-scroll">
+      <ScrollShadow className="w-full h-full">{children}</ScrollShadow>
+    </div>
   );
 }
+function SidebarActions({ children }: { children?: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-4 items-start justify-start">
+      <Divider className="w-[80%] mx-auto" />
+      {children}
+    </div>
+  );
+}
+function Sidebar({ children = null }: { children?: React.ReactNode }) {
+  return (
+    <div className="hidden w-full sm:max-w-[260px] lg:max-w-[300px] sm:flex flex-col border-r border-border/10 relative z-2 ">
+      <div className="flex w-full items-center p-5 border-b border-border/10 shadow-bottom justify-between bg-gradient-to-br from-background/10 to-background-light/20">
+        <UserBtn />
+      </div>
+      <div className="flex w-full flex-col overflow-hidden flex-grow bg-gradient-to-r from-background/5 to-background-light/20 backdrop-blur-sm shadow-right">
+        {children}
+        <div className="flex flex-col p-3 items-start justify-start mt-auto gap-2">
+          <Divider className="w-full" />
+          <ThemeSwitch />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Sidebar;
+export { SidebarBody, SidebarActions };

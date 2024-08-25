@@ -11,6 +11,7 @@ import {
 } from '@nextui-org/dropdown';
 import { signOut } from 'next-auth/react';
 
+import ThemeSwitch from '../ThemeSwitch';
 import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
 export default function UserBtn() {
@@ -53,7 +54,7 @@ export default function UserBtn() {
             <p className="font-semibold">{user.email}</p>
           </DropdownItem>
         </DropdownSection>
-        <DropdownSection aria-label="Actions">
+        <DropdownSection aria-label="Actions" showDivider>
           <DropdownItem key="team_settings" endContent={svgDashboard} href="/">
             Dashboard
           </DropdownItem>
@@ -72,6 +73,13 @@ export default function UserBtn() {
           >
             Log Out
           </DropdownItem>
+        </DropdownSection>
+        <DropdownSection aria-label="Theme" className="sm:hidden">
+          <DropdownItem
+            key="Switch Theme"
+            startContent={<ThemeSwitch />}
+            textValue="Switch Theme"
+          ></DropdownItem>
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>

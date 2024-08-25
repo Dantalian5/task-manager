@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect } from 'react';
 
 import { Button } from '@nextui-org/button';
@@ -199,7 +200,7 @@ export default function SettingsForm({ userId }: { userId: number }) {
           ))}
         </Select>
       </div>
-      <div className="flex w-full gap-4 items-center justify-end">
+      <div className="flex w-full gap-4 items-center justify-end flex-wrap">
         <BtnConfirm
           color="danger"
           type="button"

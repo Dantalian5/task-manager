@@ -24,8 +24,7 @@ export default function Board() {
     return <EmptyBoard variant="board" />;
   }
   return (
-    <main className="w-full flex flex-col items-stretch flex-grow overflow-scroll">
-      <TopBar />
+    <>
       {board.columns.length > 0 ? (
         <div className=" flex items-start p-4 overflow-x-scroll snap-x snap-mandatory scroll-px-4 gap-x-6 w-full h-full flex-grow relative z-10">
           {' '}
@@ -52,6 +51,6 @@ export default function Board() {
       ) : (
         <EmptyBoard variant="column" />
       )}
-    </main>
+    </>
   );
 }

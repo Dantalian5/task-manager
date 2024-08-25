@@ -1,1 +1,2 @@
-export { default } from './SideBar';
+// index.ts
+export { default as Sidebar, SidebarBody, SidebarActions } from './SideBar';
