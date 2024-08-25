@@ -4,7 +4,7 @@ import useSWR, { mutate } from 'swr';
 import { Divider } from '@nextui-org/divider';
 import { Button } from '@nextui-org/button';
 
-import type { Board, Column, Settings } from '@/types/global';
+import type { Board, Column, Settings, Task } from '@/types/global';
 import { SortOrder } from '@/schemas/userSchema';
 
 interface BoardsContextProps {
@@ -134,23 +134,63 @@ export const BoardsProvider = ({
 
 export const SelectedBoardProvider = ({
   children,
+  sortColumnBy,
+  sortTaskBy,
 }: {
   children: React.ReactNode;
+  sortColumnBy: Settings['columnSortBy'];
+  sortTaskBy: Settings['taskSortBy'];
 }) => {
   const { selectedBoardId: id } = useBoards();
-  const dbUrl = `/api/boards/${id}?include=tasks`;
-  const { data: board, error, isLoading } = useSWR(id ? dbUrl : null, fetcher);
+  const apiUrl = `/api/boards/${id}?include=tasks`;
+  const { data: board, error, isLoading } = useSWR(id ? apiUrl : null, fetcher);
   const columns = board?.columns.map((column: Column) => ({
     id: column.id,
     name: column.name,
   }));
   const reload = async () => {
-    await mutate(dbUrl);
+    await mutate(apiUrl);
   };
-  console.log;
+
+  const sortFn = (a: any, b: any, criteria: SortOrder): number => {
+    switch (criteria) {
+      case SortOrder.AlphaAsc:
+        return a.name?.localeCompare(b.name) || a.title.localeCompare(b.title);
+      case SortOrder.AlphaDesc:
+        return b.name?.localeCompare(a.name) || b.title.localeCompare(a.title);
+      case SortOrder.DateNewest:
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case SortOrder.DateOldest:
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case SortOrder.UpdatedNewest:
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      case SortOrder.UpdatedOldest:
+        return (
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
+      default:
+        return 0;
+    }
+  };
+  board?.columns?.sort((a: Column, b: Column) => sortFn(a, b, sortColumnBy));
+  board?.columns?.map((column: Column) => {
+    column.tasks.sort((a: Task, b: Task) => sortFn(a, b, sortTaskBy));
+  });
   return (
     <SelectedBoardContext.Provider
-      value={{ board, columns, error, isLoading, reload }}
+      value={{
+        board,
+        columns,
+        error,
+        isLoading,
+        reload,
+      }}
     >
       {children}
     </SelectedBoardContext.Provider>

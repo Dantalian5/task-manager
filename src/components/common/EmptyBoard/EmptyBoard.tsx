@@ -3,8 +3,8 @@ import React from 'react';
 import { useDisclosure } from '@nextui-org/react';
 import { Button } from '@nextui-org/button';
 
-import AddBoard from '@/components/common/AddBoard';
-import AddColumn from '@/components/common/AddColumn';
+import AddBoard from '@/components/forms/AddBoard';
+import AddColumn from '@/components/forms/AddColumn';
 import { svgAddBoard, svgAddColumn } from '@/utils/svgIcons';
 
 interface EmptyBoardProps {

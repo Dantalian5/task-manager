@@ -5,7 +5,7 @@ import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { useDisclosure } from '@nextui-org/react';
 
 import TaskDetails from '@/components/common/TaskDetails';
-import TaskEdit from '@/components/common/TaskEdit';
+import TaskEdit from '@/components/forms/TaskEdit';
 import { useTask } from '@/context/TaskProvider';
 
 export default function TaskCard() {

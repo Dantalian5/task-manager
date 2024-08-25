@@ -41,7 +41,10 @@ export default async function Dashboard() {
       <BoardsProvider
         sortBoardsBy={(settings?.boardSortBy || 'dateNewest') as SortOrder}
       >
-        <SelectedBoardProvider>
+        <SelectedBoardProvider
+          sortColumnBy={(settings?.columnSortBy || 'dateNewest') as SortOrder}
+          sortTaskBy={(settings?.taskSortBy || 'dateNewest') as SortOrder}
+        >
           <Sidebar>
             <SidebarBody>
               <BoardsTabs />

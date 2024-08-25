@@ -5,8 +5,8 @@ import { Button } from '@nextui-org/button';
 import { useDisclosure } from '@nextui-org/react';
 import { Tooltip } from '@nextui-org/tooltip';
 
-import TaskEdit from '@/components/common/TaskEdit';
-import EditBoard from '@/components/common/EditBoard';
+import TaskEdit from '@/components/forms/TaskEdit';
+import EditBoard from '@/components/forms/EditBoard';
 import { useSelectedBoard } from '@/context/BoardsProvider';
 import { svgEditBoard, svgPlus } from '@/utils/svgIcons';
 

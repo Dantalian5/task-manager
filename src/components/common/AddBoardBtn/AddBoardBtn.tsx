@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useDisclosure } from '@nextui-org/react';
 
-import AddBoard from '@/components/common/AddBoard';
+import AddBoard from '@/components/forms/AddBoard';
 import { svgAddBoard } from '@/utils/svgIcons';
 
 export default function AddBoardBtn() {
