@@ -15,6 +15,7 @@ import { useForm, useFieldArray, SubmitHandler, set } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Spinner } from '@nextui-org/spinner';
 
+import BtnConfirm from '@/components/common/BtnConfirm';
 import { type BoardSchema, boardSchema } from '@/schemas/boardSchema';
 import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
 import { svgClose, svgDelete } from '@/utils/svgIcons';
@@ -210,15 +211,17 @@ export default function BoardEdit({
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button
+              <BtnConfirm
+                onConfirm={onDelete}
                 color="danger"
-                onClick={onDelete}
-                className="mr-auto"
                 type="button"
+                aria-label="delete"
                 startContent={svgDelete}
-              >
-                Delete
-              </Button>
+                className="mr-auto text-lg"
+                isIconOnly
+                title="Delete Board"
+                message="Are you sure you want to delete this Board?"
+              />
               <Button color="default" onClick={onCloseModal} type="button">
                 Cancel
               </Button>

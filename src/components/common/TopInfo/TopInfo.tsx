@@ -8,10 +8,17 @@ import { Tooltip } from '@nextui-org/tooltip';
 import TaskEdit from '@/components/forms/TaskEdit';
 import EditBoard from '@/components/forms/EditBoard';
 import { useSelectedBoard } from '@/context/BoardsProvider';
-import { svgEditBoard, svgPlus } from '@/utils/svgIcons';
+import {
+  svgBoard,
+  svgEditBoard,
+  svgPlus,
+  svgArrowDown,
+} from '@/utils/svgIcons';
+import { useApp } from '@/context/AppProvider';
 
 export default function Topbar() {
   const { board, isLoading } = useSelectedBoard();
+  const { setIsSidebarOpen, interactiveRef } = useApp();
   const {
     isOpen: isTaskEditOpen,
     onOpen: onTaskEditOpen,
@@ -31,9 +38,22 @@ export default function Topbar() {
 
   return (
     <>
-      <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+      <h2 className="hidden sm:block text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
         {board?.title}
       </h2>
+      <Button
+        ref={interactiveRef}
+        variant="light"
+        color="primary"
+        className="sm:hidden text-xl font-semibold text-foreground"
+        startContent={<span className="text-xl">{svgBoard}</span>}
+        endContent={<span className="text-2xl">{svgArrowDown}</span>}
+        onClick={() => setIsSidebarOpen((prev) => !prev)}
+      >
+        <span className="block w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+          {board?.title}
+        </span>
+      </Button>
       <div className="flex items-center justify-center gap-1 sm:gap-3">
         {board?.columns.length > 0 && (
           <Button

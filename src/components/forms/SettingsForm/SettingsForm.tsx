@@ -57,7 +57,6 @@ export default function SettingsForm({ userId }: { userId: number }) {
             columnSortBy: settings.columnSortBy as SortOrder,
             taskSortBy: settings.taskSortBy as SortOrder,
           });
-          console.log(settings);
         }
       } catch (error) {
         toast.error('Failed to load settings');

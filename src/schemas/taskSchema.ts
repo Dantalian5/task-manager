@@ -9,7 +9,7 @@ export const subTaskSchema = z.object({
 export const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string(),
-  columnId: z.number().int('Column ID must be an integer'),
+  columnId: z.number().int('Status is required'),
   subTasks: z.array(subTaskSchema).default([]),
 });
 

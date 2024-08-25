@@ -11,7 +11,7 @@ interface BtnConfirmProps extends ButtonProps {
   onConfirm: () => void;
   title: string;
   message: string;
-  label: string;
+  label?: string;
 }
 
 export default function BtnConfirm({

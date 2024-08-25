@@ -1,23 +1,27 @@
 'use client';
 import React from 'react';
 
+import { Spinner } from '@nextui-org/spinner';
+
 import { Select, SelectItem } from '@nextui-org/select';
 import { useSelectedBoard, useBoards } from '@/context/BoardsProvider';
 
 export default function SelectBoard() {
-  const { board, isLoading: isSelectedBoardLoading } = useSelectedBoard();
   const { boards, selectedBoardId, changeSelectedBoard, isLoading } =
     useBoards();
 
-  if (isLoading || isSelectedBoardLoading) {
-    return null;
-  }
+  const handleSelectionChange = (key: React.Key) => {
+    if (Number(key) !== Number(selectedBoardId))
+      changeSelectedBoard(Number(key));
+  };
 
-  return (
-    <h2 className="text-xl sm:text-2xl font-semibold text-foreground w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
-      {board?.title}
-    </h2>
-  );
+  if (isLoading) {
+    return (
+      <div className="w-full p-4 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   // const selectedKeys = selectedBoard !== null ? [String(selectedBoard.id)] : [];
   // const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -27,22 +31,21 @@ export default function SelectBoard() {
   //     );
   //   }
   // };
-  // return (
-  //   <Select
-  //     className="w-[50%] mr-auto sm:hidden"
-  //     classNames={{
-  //       value: 'text-base font-bold',
-  //     }}
-  //     selectionMode="single"
-  //     defaultSelectedKeys={selectedKeys}
-  //     selectedKeys={selectedKeys}
-  //     variant="underlined"
-  //     aria-label="Select Board"
-  //     onChange={handleSelectionChange}
-  //   >
-  //     {boards.map((board) => (
-  //       <SelectItem key={board.id}>{board.title}</SelectItem>
-  //     ))}
-  //   </Select>
-  // );
+  return (
+    <Select
+      className="w-[50%] mr-auto sm:hidden"
+      classNames={{
+        value: 'text-base font-bold',
+      }}
+      selectionMode="single"
+      selectedKeys={[selectedBoardId?.toString()]}
+      variant="underlined"
+      aria-label="Select Board"
+      onChange={handleSelectionChange}
+    >
+      {boards.map((board) => (
+        <SelectItem key={board.id}>{board.title}</SelectItem>
+      ))}
+    </Select>
+  );
 }

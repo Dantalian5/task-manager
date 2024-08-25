@@ -15,6 +15,7 @@ import { Spinner } from '@nextui-org/spinner';
 import { useSelectedBoard } from '@/context/BoardsProvider';
 import { useTask } from '@/context/TaskProvider';
 import { svgDelete } from '@/utils/svgIcons';
+import BtnConfirm from '@/components/common/BtnConfirm';
 
 interface DetailsProps {
   isOpen: boolean;
@@ -180,14 +181,17 @@ export default function Details({
             </ModalBody>
             <Divider />
             <ModalFooter>
-              <Button
+              <BtnConfirm
+                onConfirm={deleteTask}
                 color="danger"
-                onClick={deleteTask}
+                type="button"
                 startContent={svgDelete}
-                className="mr-auto px-0 sm:px-6 min-w-12"
-              >
-                <span className="hidden sm:inline">Delete</span>
-              </Button>
+                className="mr-auto text-lg"
+                isIconOnly
+                aria-label="delete task"
+                title="Delete Task"
+                message="Are you sure you want to delete this task?"
+              />
               <Button color="default" onClick={onClose}>
                 Close
               </Button>

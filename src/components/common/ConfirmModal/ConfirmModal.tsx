@@ -56,11 +56,7 @@ export default function ConfirmModal({
               <Button color="primary" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button
-                color="danger"
-                onPress={handleAccept}
-                aria-label="confirm button"
-              >
+              <Button color="danger" onPress={handleAccept}>
                 Accept
               </Button>
             </ModalFooter>
