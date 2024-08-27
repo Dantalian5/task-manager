@@ -24,8 +24,7 @@ export const metadata: Metadata = {
     description: 'Stay focused and organized with a desk that works for you.',
   },
   icons: {
-    icon: '/icon.png',
-    shortcut: '/shortcut-icon.png',
+    icon: '/icon.svg',
     apple: '/apple-icon.png',
     other: {
       rel: 'apple-touch-icon-precomposed',
