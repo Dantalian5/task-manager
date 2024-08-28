@@ -32,9 +32,15 @@ export default function Board() {
               key={column.id}
               className="w-[280px] min-w-[280px] snap-start snap-always"
             >
-              <h2 className="text-xs text-foreground/50 font-bold uppercase tracking-[2.4px] mb-6">
-                {column.name} ({column.tasks?.length || 0})
-              </h2>
+              <div className="w-[80%] flex items-center justify-start mb-6 gap-2">
+                <h2 className="text-xs text-foreground/50 font-bold uppercase tracking-[2.4px] overflow-hidden text-ellipsis">
+                  {column.name}
+                </h2>
+                <span className="text-xs text-foreground/50 font-bold uppercase">
+                  ({column.tasks?.length || 0})
+                </span>
+              </div>
+
               <div className="flex flex-col w-full gap-y-5">
                 {column.tasks?.map((task) => (
                   <div key={task.id}>

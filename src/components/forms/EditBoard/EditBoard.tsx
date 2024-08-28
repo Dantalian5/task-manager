@@ -64,7 +64,7 @@ export default function BoardEdit({
         }))
       );
     }
-  }, [board, reset, replace]);
+  }, [board, isOpen]);
 
   const onSubmit: SubmitHandler<BoardSchema> = async (data) => {
     setIsSaving(true);
