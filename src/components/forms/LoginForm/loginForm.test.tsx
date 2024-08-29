@@ -93,8 +93,6 @@ describe('LoginForm', () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Invalid email or password');
-      expect(screen.getByLabelText(/Email/i)).toHaveValue('');
-      expect(screen.getByLabelText(/Password/i)).toHaveValue('');
     });
   });
 });

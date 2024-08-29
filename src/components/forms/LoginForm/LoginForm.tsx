@@ -43,7 +43,6 @@ export default function LoginForm() {
         router.push('/');
       } else {
         toast.error('Invalid email or password');
-        reset();
       }
     } catch (error) {
       console.error('Error submiting task:', error);
@@ -57,7 +56,7 @@ export default function LoginForm() {
     >
       <h1 className="text-2xl text-center mb-4">Sign In</h1>
       <Input
-        type="email"
+        type="text"
         labelPlacement="outside"
         label="Email"
         isInvalid={!!errors.email?.message}
