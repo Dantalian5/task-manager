@@ -11,14 +11,15 @@ import {
 } from '@nextui-org/dropdown';
 import { signOut } from 'next-auth/react';
 
-import ThemeSwitch from '../ThemeSwitch';
+import ThemeSwitch from '@/components/common/ThemeSwitch';
 import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
 export default function UserBtn() {
   const session = useSession();
+
   const user = {
-    name: session?.data?.user?.name || 'G',
-    email: session?.data?.user?.email || 'G',
+    name: session?.data?.user?.name || '',
+    email: session?.data?.user?.email || '',
   };
   return (
     <Dropdown

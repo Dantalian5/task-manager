@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Select, SelectItem } from '@nextui-org/select';
 import toast from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signOut } from 'next-auth/react';
 
 import {
   type UpdateUserSettings,
@@ -72,14 +73,14 @@ export default function SettingsForm({ userId }: { userId: number }) {
       setIsSaving(true);
       const res = await putUserSettings(data);
       if (res?.status === 200) {
-        toast.success('User deleted successfully');
+        toast.success('Settings updated successfully');
         if (res.settings)
           reset({
             boardSortBy: res.settings.boardSortBy as SortOrder,
             columnSortBy: res.settings.columnSortBy as SortOrder,
             taskSortBy: res.settings.taskSortBy as SortOrder,
           });
-      } else if (res?.status === 401) {
+      } else if (res?.status === 404) {
         toast.error('Unauthorized Action');
       } else {
         toast.error('Oops, something went wrong. Try again later');
@@ -115,6 +116,7 @@ export default function SettingsForm({ userId }: { userId: number }) {
       const res = await deleteUser();
       if (res?.status === 200) {
         toast.success('User deleted successfully');
+        signOut();
       } else if (res?.status === 401) {
         toast.error('Unauthorized Action');
       } else {

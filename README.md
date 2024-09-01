@@ -146,7 +146,7 @@ The project is built using Next.js with TypeScript for both the frontend and bac
    ```
 3. Add .dev file/variables to proyect
 
-   ```ts
+   ```js
    AUTH_SECRET=YOUROWNAUTHSECRET
    DATABASE_URL=postgresql://user:password@localhost:port/db_name
    NEXTAUTH_URL=http://localhost:3000
@@ -184,7 +184,7 @@ The project is built using Next.js with TypeScript for both the frontend and bac
 - [x] Create kanban style board/task manager
 - [x] Add Color theme variants
 - [x] Add Database (Postgress/Prisma)
-- [x] Create RESTfull api whit CRUD capabilities **(next app router endpoints)**
+- [x] Create RESTful api whit CRUD capabilities **(next app router endpoints)**
 - [x] Add Realtime db management & app load/write
 - [x] Add Auth system
   - [x] Implement Next-Auth
@@ -257,7 +257,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [license-url]: https://github.com/Dantalian5/task-manager/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/marcos-valenzuela-coding
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: public/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [Tailwind.com]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=TailwindCSS&logoColor=%23fff

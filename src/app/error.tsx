@@ -1,7 +1,7 @@
 'use client';
 
-import { Divider } from '@nextui-org/divider';
-import { Button } from '@nextui-org/button';
+import Link from 'next/link';
+
 export default function Error({
   error,
   reset,
@@ -10,23 +10,39 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="w-full max-w-[80%] mx-auto h-full flex-grow flex flex-col items-center justify-center gap-4">
-      <h2 className="text-4xl text-center font-semibold">Oops!</h2>
-      <p className="text-xl text-center">Something went wrong.</p>
-      <Divider />
-      <p className="text-base text-secondary">
-        Please try again, or reach out to our{' '}
+    <div className="w-full max-w-[80%] mx-auto min-h-svh flex-grow flex flex-col items-center justify-center gap-6 p-4">
+      <h1 className="text-4xl text-center font-semibold">
+        Oops! Something went wrong!
+      </h1>
+      <p className="text-lg text-center text-foreground">
+        We encountered an unexpected error while loading the application.
+      </p>
+      <p className="text-base text-secondary text-center">
+        Please try refreshing the page, or return to the homepage. If the
+        problem persists, contact our{' '}
         <a
           className="text-center text-primary underline"
           href="https://valenzuela.dev"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           development team
         </a>{' '}
-        for assistance .
+        for further assistance.
       </p>
-      <Button color="primary" size="lg" onClick={() => reset()}>
-        Try again
-      </Button>
+      <div className="flex gap-4 items-center justify-center flex-wrap mt-4">
+        <button
+          onClick={() => reset()}
+          className="bg-primary  px-4 py-2 rounded-md shadow hover:bg-primary/70 transition duration-300 hover:scale-110"
+        >
+          Refresh Page
+        </button>
+        <Link href="/" className="">
+          <button className="bg-secondary text-white px-4 py-2 rounded-md shadow hover:bg-primary/70 transition duration-300 hover:scale-110">
+            Return Home
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

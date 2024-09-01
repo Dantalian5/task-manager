@@ -92,26 +92,30 @@ export const BoardsProvider = ({
 
   if (error) {
     return (
-      <div className="w-full max-w-[80%] mx-auto h-full flex-grow flex flex-col items-center justify-center gap-4">
-        <h2 className="text-4xl text-center font-semibold">Oops!</h2>
-        <p className="text-xl text-center">
-          We’re having trouble connecting to the server.
-        </p>
-        <Divider />
-        <p className="text-base text-secondary">
-          Please try again, or reach out to our{' '}
-          <a
-            className="text-center text-primary underline"
-            href="https://valenzuela.dev"
-          >
-            development team
-          </a>{' '}
-          for assistance .
-        </p>
-        <Button color="primary" size="lg" onClick={reload}>
-          Try again
-        </Button>
-      </div>
+      <>
+        <div className="w-full max-w-[80%] mx-auto h-full flex-grow flex flex-col items-center justify-center gap-4">
+          <h2 className="text-4xl text-center font-semibold">
+            Oops! Something went wrong!
+          </h2>
+          <p className="text-xl text-center">
+            We’re having trouble connecting to the server.
+          </p>
+          <Divider />
+          <p className="text-base text-secondary text-center">
+            Please try again, or reach out to our{' '}
+            <a
+              className="text-center text-primary underline"
+              href="https://valenzuela.dev"
+            >
+              development team
+            </a>{' '}
+            for assistance .
+          </p>
+          <Button color="primary" size="lg" onClick={reload}>
+            Try again
+          </Button>
+        </div>
+      </>
     );
   }
   boards?.sort(sortFn);

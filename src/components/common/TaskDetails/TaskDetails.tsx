@@ -96,7 +96,7 @@ export default function Details({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ columnId: Number(localColumn) }),
+          body: JSON.stringify({ ...task, columnId: Number(localColumn) }),
         });
 
         if (!response.ok) {

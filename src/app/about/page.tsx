@@ -98,9 +98,9 @@ export default function About() {
           <h3 className="text-xl mb-4">Backend:</h3>
           <ul className="list-decimal list-inside text-secondary text-base mb-4 flex flex-col gap-2">
             <li>
-              <b>API Routes:</b>
-              Built on Next.js API routes to handle all backend logic
-              seamlessly.
+              <b>Routes Handlers:</b>
+              Built on Next.js Routes Handlers to handle all backend logic
+              seamlessly (API routes equivalent).
             </li>
             <li>
               <b>Authentication:</b>
