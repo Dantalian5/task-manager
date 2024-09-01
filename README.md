@@ -190,7 +190,7 @@ The project is built using Next.js with TypeScript for both the frontend and bac
 - [x] Add Auth system
   - [x] Implement Next-Auth
   - [x] Implement server, API & app auth system (JWT)
-- [ ] Cretae Home & About pages
+- [x] Create Home & About pages
 - [x] Implement Unitary testing on critical components
 - [ ] Implement e2e testing using playwright
 
