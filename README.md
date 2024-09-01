@@ -38,10 +38,10 @@
   <p align="center">
     A Kanban-style task management system built with Next.js and TypeScript. Organize your tasks efficiently with customizable boards, columns, and tasks/subtasks.
     <br />
-    <a href="https://github.com/Dantalian5/task-manager"><strong>Explore the docs »</strong></a>
+    <a href="https://focusdesk-ecru.vercel.app/about/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Dantalian5/task-manager">Live Site</a>
+    <a href="https://focusdesk-ecru.vercel.app/">Live Site</a>
     ·
     <a href="https://github.com/Dantalian5/task-manager/issues">Report Bug</a>
     ·

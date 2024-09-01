@@ -29,8 +29,8 @@ model Setting {
   userId   Int  @unique 
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   boardSortBy  SortOrder @default(dateNewest)
-  columnSortBy SortOrder @default(dateNewest)
-  taskSortBy   SortOrder @default(dateNewest)
+  columnSortBy SortOrder @default(dateOldest)
+  taskSortBy   SortOrder @default(dateOldest)
 }
 model Board {
   id          Int       @id @default(autoincrement())

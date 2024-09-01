@@ -32,8 +32,8 @@ export default async function Dashboard() {
       ? res.settings
       : {
           boardSortBy: 'dateNewest',
-          columnSortBy: 'dateNewest',
-          taskSortBy: 'dateNewest',
+          columnSortBy: 'dateOldest',
+          taskSortBy: 'dateOldest',
         };
 
   return (

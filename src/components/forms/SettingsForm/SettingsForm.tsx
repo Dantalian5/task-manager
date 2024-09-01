@@ -42,8 +42,8 @@ export default function SettingsForm({ userId }: { userId: number }) {
     resolver: zodResolver(updateUserSettings),
     defaultValues: {
       boardSortBy: 'dateNewest' as SortOrder,
-      columnSortBy: 'dateNewest' as SortOrder,
-      taskSortBy: 'dateNewest' as SortOrder,
+      columnSortBy: 'dateOldest' as SortOrder,
+      taskSortBy: 'dateOldest' as SortOrder,
     },
   });
 
