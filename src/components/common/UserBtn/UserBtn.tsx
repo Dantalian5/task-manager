@@ -15,12 +15,12 @@ import ThemeSwitch from '@/components/common/ThemeSwitch';
 import { svgDashboard, svgLogout, svgSettings } from '@/utils/svgIcons';
 
 export default function UserBtn() {
-  const session = useSession();
-
+  const { data } = useSession();
   const user = {
-    name: session?.data?.user?.name || '',
-    email: session?.data?.user?.email || '',
+    name: data?.user?.name || '',
+    email: data?.user?.email || '',
   };
+
   return (
     <Dropdown
       placement="bottom-end"

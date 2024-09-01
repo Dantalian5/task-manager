@@ -25,7 +25,7 @@ export default function BoardsTabs() {
   }
   return (
     <Tabs
-      selectedKey={selectedBoardId?.toString()}
+      selectedKey={selectedBoardId?.toString() || ''}
       aria-label="Boards"
       isVertical
       onSelectionChange={handleSelectionChange}

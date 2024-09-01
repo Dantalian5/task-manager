@@ -1,9 +1,10 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { tryDemoUser } from '@/actions/authActions';
+import { signIn } from 'next-auth/react';
 
 import { Button } from '@nextui-org/button';
 
@@ -13,8 +14,8 @@ export default function IntroPage() {
     try {
       const res = await signIn('credentials', {
         redirect: false,
-        email: process.env.NEXT_PUBLIC_DEMO_USER,
-        password: process.env.NEXT_PUBLIC_DEMO_PASSWORD,
+        email: 'test@email.com',
+        password: 'SecurePassword',
       });
       if (await !res?.error) {
         toast.success('Successfully logged in as demo user');
@@ -38,7 +39,10 @@ export default function IntroPage() {
       </p>
       <p className="text-base text-secondary">
         New here?{' '}
-        <Link href="/signup" className="text-primary font-bold hover:underline">
+        <Link
+          href="/register"
+          className="text-primary font-bold hover:underline"
+        >
           Sign up
         </Link>{' '}
         and join us.
