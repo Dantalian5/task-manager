@@ -87,11 +87,11 @@ The project is built using Next.js with TypeScript for both the frontend and bac
 
 **Key Features:**
 
-• **Kanban Task Management:** Organize tasks using a board-column-task-subtask hierarchy.
-• **Customizable Columns:** Users can create columns tailored to their workflow.
-• **Subtasks Support:** Add subtasks within any task for better task breakdown.
-• **Full-Stack Development:** Powered by Next.js and TypeScript for both frontend and backend.
-• **Database Management:** Prisma ORM with PostgreSQL as the database.
+- **Kanban Task Management:** Organize tasks using a board-column-task-subtask hierarchy.
+- **Customizable Columns:** Users can create columns tailored to their workflow.
+- **Subtasks Support:** Add subtasks within any task for better task breakdown.
+- **Full-Stack Development:** Powered by Next.js and TypeScript for both frontend and backend.
+- **Database Management:** Prisma ORM with PostgreSQL as the database.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
