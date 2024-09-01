@@ -10,12 +10,14 @@ import { Button } from '@nextui-org/button';
 
 export default function IntroPage() {
   const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
   const onTryDemo = async () => {
     try {
+      setLoading(true);
       const res = await signIn('credentials', {
         redirect: false,
-        email: 'test@email.com',
-        password: 'SecurePassword',
+        email: process.env.NEXT_PUBLIC_DEMO_USER,
+        password: process.env.NEXT_PUBLIC_DEMO_PASSWORD,
       });
       if (await !res?.error) {
         toast.success('Successfully logged in as demo user');
@@ -25,6 +27,8 @@ export default function IntroPage() {
       }
     } catch (error) {
       console.error('Error entering demo mode:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,6 +65,7 @@ export default function IntroPage() {
           color="primary"
           fullWidth
           className="font-bold text-base "
+          isLoading={loading}
         >
           Create an Account
         </Button>
@@ -69,6 +74,7 @@ export default function IntroPage() {
           fullWidth
           className="font-bold text-base"
           onClick={onTryDemo}
+          isLoading={loading}
         >
           Try the Demo
         </Button>
