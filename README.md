@@ -148,7 +148,7 @@ The project is built using Next.js with TypeScript for both the frontend and bac
 
    ```js
    AUTH_SECRET=YOUROWNAUTHSECRET
-   DATABASE_URL=postgresql://user:password@localhost:port/db_name
+   POSTGRES_URL=postgresql://user:password@localhost:port/db_name
    NEXTAUTH_URL=http://localhost:3000
    AUTH_TRUST_HOST=true
    ```
