@@ -170,9 +170,10 @@ The project is built using Next.js with TypeScript for both the frontend and bac
 ## Usage
 
 **Using FocusDesk:**
-• Create a Board: Start by creating a new board to manage your tasks.
-• Add Columns: Define columns within your board to represent different stages or categories.
-• Create Tasks: Add tasks to the columns and include subtasks if necessary.
+
+- Create a Board: Start by creating a new board to manage your tasks.
+- Add Columns: Define columns within your board to represent different stages or categories.
+- Create Tasks: Add tasks to the columns and include subtasks if necessary.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
