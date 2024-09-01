@@ -14,9 +14,16 @@ export const metadata: Metadata = {
     title: 'FocusDesk | by MV',
     description: 'Stay focused and organized with a desk that works for you.',
     url: 'https://frontend-feedback.vercel.app/',
-    siteName: 'frontend-feedback',
+    siteName: 'FocusDesk',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://github.com/Dantalian5/task-manager/blob/main/public/screenshot.png?raw=true',
+        width: 1200,
+        height: 657,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
